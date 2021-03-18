@@ -1,6 +1,8 @@
 ### C01_ReadBaselineData
 ### Reading in baseline data
 ### author: Minxin Lu
+### input:
+### output:
 library(readr)
 library(dbplyr)
 library(tidyverse)
