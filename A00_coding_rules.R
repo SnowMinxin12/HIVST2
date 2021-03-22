@@ -6,6 +6,7 @@
 ##    Numbers indicate the flow of codes
 ##      0x = data reading
 ##      1x = data screening
+###     2x = variable selection
 ##      3x = model building and analysis
 ##      (to be added)
 
@@ -13,8 +14,9 @@
 ###  file_name.R
 ###  summary of things done in this file
 ###  author: XXX
-### input: datasets_name or R_files_names 
-### output: output_file_name
+###  date: 2021-3-22
+###  input: datasets_name or R_files_names 
+###  output: output_file_name
 
 ## 3. working directory
 ##    Working directory is the root of the R project (HIVST2)
