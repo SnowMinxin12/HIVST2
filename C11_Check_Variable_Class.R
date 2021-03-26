@@ -77,8 +77,47 @@ cont_varB <- setdiff(colnames(DataS),c(date_varB,binary_varB,factor_varB,ordinal
 
 
 # factors and ordinals as factors; continuous variables as numerical 
-Datas[factor_varB] <- as.factor(DataS[factor_varB])
+DataS[factor_varB] <- as.factor(DataS[factor_varB])
 DataS[ordinal_varB] <- as.factor(DataS[ordinal_varB])
 DataS[cont_varB] <- as.numeric(DataS[cont_varB])
 
 ##### Alter 269 data #####
+
+# date variables
+date_varB <- c('C')
+
+# binary variables
+binary_varB <- c('L','O','Q','U','Z',
+                 'AC','AD','AE','AF','AG','AH','AI','AM','AP','AQ','AR','AS',
+                 'BH','BL','BM','BS','BW','BX',
+                 'CD','CH','CI','CJ','CR','CS',
+                 'DA','DB','DJ')
+
+# factor variables
+factor_varB <- c('B','D','J','M','N','S',
+                 'AJ','AL','AN','AO','AT','AU','AV','AW',
+                 'BB','BD','BE','BF','BI','BO','BP','BQ','BT','BZ',
+                 'CA','CB','CE','CL','CM','CN','CO','CU','CV','CW','CX',
+                 'DD','DE','DF','DG','DK','DL')
+
+#ordinal variables
+ordinal_varB <- c('W','T','Y',
+                  'AB','AK','AY',
+                  'BA','BG','BJ','BK','BR','BU','BV',
+                  'CC','CF','CG','CP','CQ','CY','CZ',
+                  'DH','DI','DM','DN')
+
+#unrelated variables 
+unrelated_varB <- c('P',
+                    'BC','BN','BY',
+                    'CK','CT',
+                    'DC')
+
+#continous variables
+cont_varB <- setdiff(colnames(DataA),c(date_varB,binary_varB,factor_varB,ordinal_varB,unrelated_varB))
+
+
+# factors and ordinals as factors; continuous variables as numerical 
+DataA[factor_varB] <- as.factor(DataA[factor_varB])
+DataA[ordinal_varB] <- as.factor(DataA[ordinal_varB])
+DataA[cont_varB] <- as.numeric(DataA[cont_varB])
