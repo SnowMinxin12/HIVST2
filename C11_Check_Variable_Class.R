@@ -53,4 +53,32 @@ dataB.c14 <- dataB.c14[ , -which(names(dataB.c14) %in% tobedeleted_varB)]
 DataB <- dataB.c14
 
 ##### Survey 207 data #####
+
+# date variables
+date_varB <- c('A')
+
+# binary variables
+binary_varB <- c('E','F','G','H','I','O','P','Q','R','S','Y','Z',
+                 'AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM',
+                 'AN','AO','AP','AQ','AR','AS','AV','AZ','BD','BI')
+
+# factor variables
+factor_varB <- c('J','K','L','M','N','T','U','V','W','X','AW','AX','AY',
+                 'BB','BN')
+
+#ordinal variables
+ordinal_varB <- c('BC','BF','BH','BJ','BK','BM')
+
+#unrelated variables 
+unrelated_varB <- c('B','AT')
+
+#continous variables
+cont_varB <- setdiff(colnames(DataS),c(date_varB,binary_varB,factor_varB,ordinal_varB,unrelated_varB))
+
+
+# factors and ordinals as factors; continuous variables as numerical 
+Datas[factor_varB] <- as.factor(DataS[factor_varB])
+DataS[ordinal_varB] <- as.factor(DataS[ordinal_varB])
+DataS[cont_varB] <- as.numeric(DataS[cont_varB])
+
 ##### Alter 269 data #####
