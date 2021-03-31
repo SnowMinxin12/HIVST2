@@ -1,9 +1,12 @@
 ### C11_Check_Variable_Class.R
 ### Check factors as factors, numbers as numbers
 ### author: Zhentao Yu, Minxin Lu
-### date: 2021-3-22
+### date: 2021-3-31
 ### input: C01_ReadData.R
 ### output: a new dataset with variables in the correct class
+###         DataB for baseline 307 data
+###         DataS for Survey 207 data
+###         DataA for Alter 269 data
 
 library(dplyr)
 source("C01_ReadData.R")
@@ -55,69 +58,69 @@ DataB <- dataB.c14
 ##### Survey 207 data #####
 
 # date variables
-date_varB <- c('A')
+date_varS <- c('A')
 
 # binary variables
-binary_varB <- c('E','F','G','H','I','O','P','Q','R','S','Y','Z',
+binary_varS <- c('E','F','G','H','I','O','P','Q','R','S','Y','Z',
                  'AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM',
                  'AN','AO','AP','AQ','AR','AS','AV','AZ','BD','BI')
 
 # factor variables
-factor_varB <- c('J','K','L','M','N','T','U','V','W','X','AW','AX','AY',
+factor_varS <- c('J','K','L','M','N','T','U','V','W','X','AW','AX','AY',
                  'BB','BN')
 
 #ordinal variables
-ordinal_varB <- c('BC','BF','BH','BJ','BK','BM')
+ordinal_varS <- c('BC','BF','BH','BJ','BK','BM')
 
 #unrelated variables 
-unrelated_varB <- c('B','AT')
+unrelated_varS <- c('B','AT')
 
 #continous variables
-cont_varB <- setdiff(colnames(DataS),c(date_varB,binary_varB,factor_varB,ordinal_varB,unrelated_varB))
+cont_varS <- setdiff(colnames(DataS),c(date_varS,binary_varS,factor_varS,ordinal_varS,unrelated_varS))
 
 
 # factors and ordinals as factors; continuous variables as numerical 
-DataS[factor_varB] <- as.factor(DataS[factor_varB])
-DataS[ordinal_varB] <- as.factor(DataS[ordinal_varB])
-DataS[cont_varB] <- as.numeric(DataS[cont_varB])
+DataS[factor_varS] <- as.factor(DataS[factor_varS])
+DataS[ordinal_varS] <- as.factor(DataS[ordinal_varS])
+DataS[cont_varS] <- as.numeric(DataS[cont_varS])
 
 ##### Alter 269 data #####
 
 # date variables
-date_varB <- c('C')
+date_varA <- c('C')
 
 # binary variables
-binary_varB <- c('L','O','Q','U','Z',
+binary_varA <- c('L','O','Q','U','Z',
                  'AC','AD','AE','AF','AG','AH','AI','AM','AP','AQ','AR','AS',
                  'BH','BL','BM','BS','BW','BX',
                  'CD','CH','CI','CJ','CR','CS',
                  'DA','DB','DJ')
 
 # factor variables
-factor_varB <- c('B','D','J','M','N','S',
+factor_varA <- c('B','D','J','M','N','S',
                  'AJ','AL','AN','AO','AT','AU','AV','AW',
                  'BB','BD','BE','BF','BI','BO','BP','BQ','BT','BZ',
                  'CA','CB','CE','CL','CM','CN','CO','CU','CV','CW','CX',
                  'DD','DE','DF','DG','DK','DL')
 
 #ordinal variables
-ordinal_varB <- c('W','T','Y',
+ordinal_varA <- c('W','T','Y',
                   'AB','AK','AY',
                   'BA','BG','BJ','BK','BR','BU','BV',
                   'CC','CF','CG','CP','CQ','CY','CZ',
                   'DH','DI','DM','DN')
 
 #unrelated variables 
-unrelated_varB <- c('P',
+unrelated_varA <- c('P',
                     'BC','BN','BY',
                     'CK','CT',
                     'DC')
 
 #continous variables
-cont_varB <- setdiff(colnames(DataA),c(date_varB,binary_varB,factor_varB,ordinal_varB,unrelated_varB))
+cont_varA <- setdiff(colnames(DataA),c(date_varA,binary_varA,factor_varA,ordinal_varA,unrelated_varA))
 
 
 # factors and ordinals as factors; continuous variables as numerical 
-DataA[factor_varB] <- as.factor(DataA[factor_varB])
-DataA[ordinal_varB] <- as.factor(DataA[ordinal_varB])
-DataA[cont_varB] <- as.numeric(DataA[cont_varB])
+DataA[factor_varA] <- as.factor(DataA[factor_varA])
+DataA[ordinal_varA] <- as.factor(DataA[ordinal_varA])
+DataA[cont_varA] <- as.numeric(DataA[cont_varA])

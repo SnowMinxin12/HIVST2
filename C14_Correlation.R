@@ -7,7 +7,8 @@
 
 library(fastDummies)
 library(caret)
-source("C01_ReadData.R")
+# source("C01_ReadData.R")
+source("C11_Check_Variable_Class.R")
 
 
 # remove the things that are not of interest in examining correlation
@@ -25,17 +26,17 @@ dataB.c14 <- DataB %>%
               ))
 
 
-# factor variables
-factor_varB <- c("F","H","K","P","AH","CT","CU","CW","DA","DB")
-#ordinal variables
-ordinal_varB <- c("I","J","Q","T","V","X","Y","AB","AD","AF","AG","AI","CV")
-#continous variables
-cont_varB <- setdiff(colnames(dataB.c14),c(factor_varB,ordinal_varB))
-
-dataB.c14[factor_varB] = lapply(dataB.c14[factor_varB],factor)
-dataB.c14[ordinal_varB] = lapply(dataB.c14[ordinal_varB],factor)
-dataB.c14$S <- as.numeric(dataB.c14$S)
-dataB.c14$U <- as.numeric(dataB.c14$U)
+# # factor variables
+# factor_varB <- c("F","H","K","P","AH","CT","CU","CW","DA","DB")
+# #ordinal variables
+# ordinal_varB <- c("I","J","Q","T","V","X","Y","AB","AD","AF","AG","AI","CV")
+# #continous variables
+# cont_varB <- setdiff(colnames(dataB.c14),c(factor_varB,ordinal_varB))
+# 
+# dataB.c14[factor_varB] = lapply(dataB.c14[factor_varB],factor)
+# dataB.c14[ordinal_varB] = lapply(dataB.c14[ordinal_varB],factor)
+# dataB.c14$S <- as.numeric(dataB.c14$S)
+# dataB.c14$U <- as.numeric(dataB.c14$U)
 
 
 # change factors to dummies
