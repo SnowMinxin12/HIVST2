@@ -43,17 +43,17 @@ cont_varB <- setdiff(colnames(DataB),c(date_varB,binary_varB,factor_varB,ordinal
 
 
 # factors and ordinals as factors
-dataB.c14 <-DataB
-dataB.c14[factor_varB] = lapply(dataB.c14[factor_varB],factor)
-dataB.c14[ordinal_varB] = lapply(dataB.c14[ordinal_varB],factor)
-
-# contiunous variable ONLY S and U are missclassified as factor variables
-dataB.c14$S <- as.numeric(dataB.c14$S)
-dataB.c14$U <- as.numeric(dataB.c14$U)
+dataB.c11 <-DataB
+dataB.c11[factor_varB] = lapply(dataB.c11[factor_varB],factor)
+dataB.c11[ordinal_varB] = lapply(dataB.c11[ordinal_varB],factor)
+dataB.c11[cont_varB] = lapply(dataB.c11[cont_varB],as.numeric)
+# # contiunous variable ONLY S and U are missclassified as factor variables
+# dataB.c11$S <- as.numeric(dataB.c11$S)
+# dataB.c11$U <- as.numeric(dataB.c11$U)
 
 # remove the initial names of closest people
-dataB.c14 <- dataB.c14[ , -which(names(dataB.c14) %in% tobedeleted_varB)]
-DataB <- dataB.c14
+dataB.c11 <- dataB.c11[ , -which(names(dataB.c11) %in% tobedeleted_varB)]
+DataB <- dataB.c11
 
 ##### Survey 207 data #####
 
@@ -80,10 +80,17 @@ cont_varS <- setdiff(colnames(DataS),c(date_varS,binary_varS,factor_varS,ordinal
 
 
 # factors and ordinals as factors; continuous variables as numerical 
-DataS[factor_varS] <- as.factor(DataS[factor_varS])
-DataS[ordinal_varS] <- as.factor(DataS[ordinal_varS])
-DataS[cont_varS] <- as.numeric(DataS[cont_varS])
+dataS.c11 <- DataS
+dataS.c11[factor_varS] = lapply(dataS.c11[factor_varS],factor)
+dataS.c11[ordinal_varS] = lapply(dataS.c11[ordinal_varS],factor)
+dataS.c11[cont_varS] = lapply(dataS.c11[cont_varS],as.numeric)
+DataS <- dataS.c11
 
+summary(dataS.c11[c("BE","BG","BL")])
+check = cbind(as.data.frame(DataS$BL),as.data.frame(dataS.c11$BL))
+table(is.na(DataS$BE)) #96
+table(is.na(DataS$BG))
+table(is.na(DataS$BL))
 ##### Alter 269 data #####
 
 # date variables
@@ -121,6 +128,8 @@ cont_varA <- setdiff(colnames(DataA),c(date_varA,binary_varA,factor_varA,ordinal
 
 
 # factors and ordinals as factors; continuous variables as numerical 
-DataA[factor_varA] <- as.factor(DataA[factor_varA])
-DataA[ordinal_varA] <- as.factor(DataA[ordinal_varA])
-DataA[cont_varA] <- as.numeric(DataA[cont_varA])
+dataA.c11 <- DataA
+dataA.c11[factor_varA] = lapply(dataA.c11[factor_varA],factor)
+dataA.c11[ordinal_varA] = lapply(dataA.c11[ordinal_varA],factor)
+dataA.c11[cont_varA] = lapply(dataA.c11[cont_varA],as.numeric)
+DataA <- dataA.c11
