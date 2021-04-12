@@ -47,9 +47,7 @@ dataB.c11 <-DataB
 dataB.c11[factor_varB] = lapply(dataB.c11[factor_varB],factor)
 dataB.c11[ordinal_varB] = lapply(dataB.c11[ordinal_varB],factor)
 dataB.c11[cont_varB] = lapply(dataB.c11[cont_varB],as.numeric)
-# # contiunous variable ONLY S and U are missclassified as factor variables
-# dataB.c11$S <- as.numeric(dataB.c11$S)
-# dataB.c11$U <- as.numeric(dataB.c11$U)
+
 
 # remove the initial names of closest people
 dataB.c11 <- dataB.c11[ , -which(names(dataB.c11) %in% tobedeleted_varB)]
@@ -63,7 +61,9 @@ date_varS <- c('A')
 # binary variables
 binary_varS <- c('E','F','G','H','I','O','P','Q','R','S','Y','Z',
                  'AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM',
-                 'AN','AO','AP','AQ','AR','AS','AV','AZ','BD','BI')
+                 'AN','AO','AP','AQ','AR','AS',
+                 "AT.A","AT.B","AT.C","AT.D","AT.E","AT.F","AT.G","AT.H",
+                 'AV','AZ','BD','BI')
 
 # factor variables
 factor_varS <- c('J','K','L','M','N','T','U','V','W','X','AW','AX','AY',
@@ -73,7 +73,7 @@ factor_varS <- c('J','K','L','M','N','T','U','V','W','X','AW','AX','AY',
 ordinal_varS <- c('BC','BF','BH','BJ','BK','BM')
 
 #unrelated variables 
-unrelated_varS <- c('B','AT')
+unrelated_varS <- c('B')
 
 #continous variables
 cont_varS <- setdiff(colnames(DataS),c(date_varS,binary_varS,factor_varS,ordinal_varS,unrelated_varS))
@@ -86,11 +86,7 @@ dataS.c11[ordinal_varS] = lapply(dataS.c11[ordinal_varS],factor)
 dataS.c11[cont_varS] = lapply(dataS.c11[cont_varS],as.numeric)
 DataS <- dataS.c11
 
-summary(dataS.c11[c("BE","BG","BL")])
-check = cbind(as.data.frame(DataS$BL),as.data.frame(dataS.c11$BL))
-table(is.na(DataS$BE)) #96
-table(is.na(DataS$BG))
-table(is.na(DataS$BL))
+
 ##### Alter 269 data #####
 
 # date variables
@@ -98,17 +94,23 @@ date_varA <- c('C')
 
 # binary variables
 binary_varA <- c('L','O','Q','U','Z',
-                 'AC','AD','AE','AF','AG','AH','AI','AM','AP','AQ','AR','AS',
-                 'BH','BL','BM','BS','BW','BX',
-                 'CD','CH','CI','CJ','CR','CS',
-                 'DA','DB','DJ')
+                 'AC','AD','AE','AF','AG','AH','AI',
+                 'AJ.A','AJ.B','AJ.C','AJ.D','AJ.E','AJ.F','AJ.G','AJ.H',
+                 'AM','AP','AQ','AR','AS',
+                 'BH','BI.A','BI.B','BI.C','BI.D','BI.E','BI.F','BL','BM','BS',
+                 'BT.A','BT.B','BT.C','BT.D','BT.E','BT.F','BW','BX',
+                 'CD','CE.A','CE.B','CE.C','CE.D','CE.E','CE.F',
+                 'CH','CI','CJ','CO.A','CO.B','CO.C','CO.D','CO.E','CO.F',
+                 'CR','CS','CX.A','CX.B','CX.C','CX.D','CX.E','CX.F',
+                 'DA','DB','DG.A','DG.B','DG.C','DG.D','DG.E','DG.F',
+                 'DJ')
 
 # factor variables
 factor_varA <- c('B','D','J','M','N','S',
-                 'AJ','AL','AN','AO','AT','AU','AV','AW',
-                 'BB','BD','BE','BF','BI','BO','BP','BQ','BT','BZ',
-                 'CA','CB','CE','CL','CM','CN','CO','CU','CV','CW','CX',
-                 'DD','DE','DF','DG','DK','DL')
+                 'AL','AN','AO','AT','AU','AV','AW',
+                 'BB','BD','BE','BF','BO','BP','BQ',
+                 'BZ','CA','CB','CL','CM','CN','CU','CV','CW',
+                 'DD','DE','DF','DK','DL')
 
 #ordinal variables
 ordinal_varA <- c('W','T','Y',
@@ -118,7 +120,8 @@ ordinal_varA <- c('W','T','Y',
                   'DH','DI','DM','DN')
 
 #unrelated variables 
-unrelated_varA <- c('P',
+unrelated_varA <- c('AJ.H', # none of above happened
+                    'P',
                     'BC','BN','BY',
                     'CK','CT',
                     'DC')
