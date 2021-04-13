@@ -1,11 +1,11 @@
-### C13_MatrixforAnalysis
-### author: Minxin Lu
+### C13_JointData
+### author: 
 ### date: 2021-4-12
 ### 
 ### (1) join 3 datasets together
-### (2) delete all variables with missing > 50% or skip>50%
 ### input: C12SkipPatterbSumAlters.R
-### output: matrix for analysis (1) complete data (2) imputed data
+### output: one joint data by index confirmation code
+
 source("C11_Check_Variable_Class.R")
 length(unique(DataB$DC))#309
 length(unique(DataA$A))# 140 <269

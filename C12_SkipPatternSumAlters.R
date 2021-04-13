@@ -85,64 +85,64 @@ survey.data$hivr_fifth[survey.data$hivr_fifth==2] <- NA
 # summarize alters information as counts and proportions, if all alter information is NA then the summary=NA,
 # if any of the alters have information then the result is not NA
 #1. sex_first
-AlterSexColumns = survey.data[,c("sex_first","sex_second","sex_third","sex_fourth","sex_fifth")]
-survey.data$AlterSex0Count <- ifelse(rowSums(is.na(AlterSexColumns))==5,NA,rowSums(AlterSexColumns == "0",na.rm=TRUE)) #count rows which are not all NA
-survey.data$AlterSex0Proportion <- ifelse(rowSums(is.na(AlterSexColumns))==5,NA,rowSums(AlterSexColumns == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterSexColumns))))
+AlterSexCol = survey.data[,c("sex_first","sex_second","sex_third","sex_fourth","sex_fifth")]
+survey.data$AlterSex0Count <- ifelse(rowSums(is.na(AlterSexCol))==5,NA,rowSums(AlterSexCol == "0",na.rm=TRUE)) #count rows which are not all NA
+survey.data$AlterSex0Proportion <- ifelse(rowSums(is.na(AlterSexCol))==5,NA,rowSums(AlterSexCol == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterSexCol))))
 
 #2. relation_first
-AlterRelationColumns = survey.data[,c("relation_first","relation_second","relation_third","relation_fourth","relation_fifth")]
-survey.data$AlterRelation0Count <- ifelse(rowSums(is.na(AlterRelationColumns))==5,NA,
-                                          rowSums(AlterRelationColumns == "0",na.rm=TRUE))
-survey.data$AlterRelation0Proportion <- ifelse(rowSums(is.na(AlterRelationColumns))==5,NA,
-                                           rowSums(AlterRelationColumns == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterRelationColumns))))
-survey.data$AlterRelation1Count <- ifelse(rowSums(is.na(AlterRelationColumns))==5,NA,
-                                          rowSums(AlterRelationColumns == "1",na.rm=TRUE))
-survey.data$AlterRelation1Proportion <- ifelse(rowSums(is.na(AlterRelationColumns))==5,NA,
-                                               rowSums(AlterRelationColumns == "1",na.rm=TRUE)/(5-rowSums(is.na(AlterRelationColumns))))
-survey.data$AlterRelation2Count <- ifelse(rowSums(is.na(AlterRelationColumns))==5,NA,
-                                          rowSums(AlterRelationColumns == "2",na.rm=TRUE))
-survey.data$AlterRelation2Proportion <- ifelse(rowSums(is.na(AlterRelationColumns))==5,NA,
-                                               rowSums(AlterRelationColumns == "2",na.rm=TRUE)/(5-rowSums(is.na(AlterRelationColumns))))
-survey.data$AlterRelation3Count <- ifelse(rowSums(is.na(AlterRelationColumns))==5,NA,
-                                          rowSums(AlterRelationColumns == "3",na.rm=TRUE))
-survey.data$AlterRelation3Proportion <- ifelse(rowSums(is.na(AlterRelationColumns))==5,NA,
-                                               rowSums(AlterRelationColumns == "3",na.rm=TRUE)/(5-rowSums(is.na(AlterRelationColumns))))
+AlterRelationCol = survey.data[,c("relation_first","relation_second","relation_third","relation_fourth","relation_fifth")]
+survey.data$AlterRelation0Count <- ifelse(rowSums(is.na(AlterRelationCol))==5,NA,
+                                          rowSums(AlterRelationCol == "0",na.rm=TRUE))
+survey.data$AlterRelation0Proportion <- ifelse(rowSums(is.na(AlterRelationCol))==5,NA,
+                                           rowSums(AlterRelationCol == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterRelationCol))))
+survey.data$AlterRelation1Count <- ifelse(rowSums(is.na(AlterRelationCol))==5,NA,
+                                          rowSums(AlterRelationCol == "1",na.rm=TRUE))
+survey.data$AlterRelation1Proportion <- ifelse(rowSums(is.na(AlterRelationCol))==5,NA,
+                                               rowSums(AlterRelationCol == "1",na.rm=TRUE)/(5-rowSums(is.na(AlterRelationCol))))
+survey.data$AlterRelation2Count <- ifelse(rowSums(is.na(AlterRelationCol))==5,NA,
+                                          rowSums(AlterRelationCol == "2",na.rm=TRUE))
+survey.data$AlterRelation2Proportion <- ifelse(rowSums(is.na(AlterRelationCol))==5,NA,
+                                               rowSums(AlterRelationCol == "2",na.rm=TRUE)/(5-rowSums(is.na(AlterRelationCol))))
+survey.data$AlterRelation3Count <- ifelse(rowSums(is.na(AlterRelationCol))==5,NA,
+                                          rowSums(AlterRelationCol == "3",na.rm=TRUE))
+survey.data$AlterRelation3Proportion <- ifelse(rowSums(is.na(AlterRelationCol))==5,NA,
+                                               rowSums(AlterRelationCol == "3",na.rm=TRUE)/(5-rowSums(is.na(AlterRelationCol))))
 
 #3. pt_first
-AlterPTColumns = survey.data[,c("pt_first","pt_second","pt_third","pt_fourth","pt_fifth")]
-survey.data$AlterPT0Count <- ifelse(rowSums(is.na(AlterPTColumns))==5,NA,
-                                          rowSums(AlterPTColumns == "0",na.rm=TRUE))
-survey.data$AlterPT0Proportion <- ifelse(rowSums(is.na(AlterPTColumns))==5,NA,
-                                               rowSums(AlterPTColumns == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterPTColumns))))
+AlterPTCol = survey.data[,c("pt_first","pt_second","pt_third","pt_fourth","pt_fifth")]
+survey.data$AlterPT0Count <- ifelse(rowSums(is.na(AlterPTCol))==5,NA,
+                                          rowSums(AlterPTCol == "0",na.rm=TRUE))
+survey.data$AlterPT0Proportion <- ifelse(rowSums(is.na(AlterPTCol))==5,NA,
+                                               rowSums(AlterPTCol == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterPTCol))))
 #4. hivr_first
-AlterHivrColumns = survey.data[,c("hivr_first","hivr_second","hivr_third","hivr_fourth","hivr_fifth")]
-survey.data$AlterHivr0Count <- ifelse(rowSums(is.na(AlterHivrColumns))==5,NA,
-                                    rowSums(AlterHivrColumns == "0",na.rm=TRUE))
-survey.data$AlterHivr0Proportion <- ifelse(rowSums(is.na(AlterHivrColumns))==5,NA,
-                                         rowSums(AlterHivrColumns == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterHivrColumns))))
+AlterHivrCol = survey.data[,c("hivr_first","hivr_second","hivr_third","hivr_fourth","hivr_fifth")]
+survey.data$AlterHivr0Count <- ifelse(rowSums(is.na(AlterHivrCol))==5,NA,
+                                    rowSums(AlterHivrCol == "0",na.rm=TRUE))
+survey.data$AlterHivr0Proportion <- ifelse(rowSums(is.na(AlterHivrCol))==5,NA,
+                                         rowSums(AlterHivrCol == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterHivrCol))))
 
 #5. pt_sex_first Y,Z,AA,AB,AC
-AlterPT_SexColumns = survey.data[,c("pt_sex_first","pt_sex_second","pt_sex_third","pt_sex_fourth","pt_sex_fifth")]
-survey.data$AlterPT_Sex0Count <- ifelse(rowSums(is.na(AlterPT_SexColumns))==5,NA,
-                                      rowSums(AlterPT_SexColumns == "0",na.rm=TRUE))
-survey.data$AlterPT_Sex0Proportion <- ifelse(rowSums(is.na(AlterPT_SexColumns))==5,NA,
-                                           rowSums(AlterPT_SexColumns == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterPT_SexColumns))))
+AlterPT_SexCol = survey.data[,c("pt_sex_first","pt_sex_second","pt_sex_third","pt_sex_fourth","pt_sex_fifth")]
+survey.data$AlterPT_Sex0Count <- ifelse(rowSums(is.na(AlterPT_SexCol))==5,NA,
+                                      rowSums(AlterPT_SexCol == "0",na.rm=TRUE))
+survey.data$AlterPT_Sex0Proportion <- ifelse(rowSums(is.na(AlterPT_SexCol))==5,NA,
+                                           rowSums(AlterPT_SexCol == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterPT_SexCol))))
 
 
 #6. sex_before_first AD,AE,AF,AG,AH
-AlterSex_BeforeColumns = survey.data[,c("sex_before_first","sex_before_second","sex_before_third","sex_before_fourth","sex_before_fifth")]
-survey.data$AlterSex_Before0Count <- ifelse(rowSums(is.na(AlterSex_BeforeColumns))==5,NA,
-                                        rowSums(AlterSex_BeforeColumns == "0",na.rm=TRUE))
-survey.data$AlterSex_Before0Proportion <- ifelse(rowSums(is.na(AlterSex_BeforeColumns))==5,NA,
-                                             rowSums(AlterSex_BeforeColumns == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterSex_BeforeColumns))))
+AlterSex_BeforeCol = survey.data[,c("sex_before_first","sex_before_second","sex_before_third","sex_before_fourth","sex_before_fifth")]
+survey.data$AlterSex_Before0Count <- ifelse(rowSums(is.na(AlterSex_BeforeCol))==5,NA,
+                                        rowSums(AlterSex_BeforeCol == "0",na.rm=TRUE))
+survey.data$AlterSex_Before0Proportion <- ifelse(rowSums(is.na(AlterSex_BeforeCol))==5,NA,
+                                             rowSums(AlterSex_BeforeCol == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterSex_BeforeCol))))
 
 
 #7. condom_first AI,AJ,AK,AL,AM
-AlterCondomColumns = survey.data[,c("condom_first","condom_second","condom_third","condom_fourth","condom_fifth")]
-survey.data$AlterCondom0Count <- ifelse(rowSums(is.na(AlterCondomColumns))==5,NA,
-                                            rowSums(AlterCondomColumns == "0",na.rm=TRUE))
-survey.data$AlterCondom0Proportion <- ifelse(rowSums(is.na(AlterCondomColumns))==5,NA,
-                                                 rowSums(AlterCondomColumns == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterCondomColumns))))
+AlterCondomCol = survey.data[,c("condom_first","condom_second","condom_third","condom_fourth","condom_fifth")]
+survey.data$AlterCondom0Count <- ifelse(rowSums(is.na(AlterCondomCol))==5,NA,
+                                            rowSums(AlterCondomCol == "0",na.rm=TRUE))
+survey.data$AlterCondom0Proportion <- ifelse(rowSums(is.na(AlterCondomCol))==5,NA,
+                                                 rowSums(AlterCondomCol == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterCondomCol))))
 
 
 # check = survey.data[,c("relation_first","relation_second","relation_third","relation_fourth","relation_fifth","AlterRelation0Count", "AlterRelation0Proportion")]
@@ -154,8 +154,8 @@ VartobeRemoved <- c("sex_first","sex_second","sex_third","sex_fourth","sex_fifth
                     "pt_sex_first","pt_sex_second","pt_sex_third","pt_sex_fourth","pt_sex_fifth",
                     "sex_before_first","sex_before_second","sex_before_third","sex_before_fourth","sex_before_fifth",
                     "condom_first","condom_second","condom_third","condom_fourth","condom_fifth")
-remove(AlterSexColumns,AlterRelationColumns,AlterPTColumns,AlterHivrColumns,AlterPT_SexColumns,
-       AlterSex_BeforeColumns,AlterCondomColumns)
+remove(AlterSexCol,AlterRelationCol,AlterPTCol,AlterHivrCol,AlterPT_SexCol,
+       AlterSex_BeforeCol,AlterCondomCol)
 
 ##### 269 Alter data names #####
 names(alters.data) <- c("confirm_code","arm","response_date","result","index_or_alter",
@@ -199,6 +199,19 @@ names(alters.data) <- c("confirm_code","arm","response_date","result","index_or_
 
 ##### SKIP pattern for 269 alter data #####
 ## SKIP pattern coding using ifelse() logic.  INCOMPLETE
+if sex_birth=1, skip to share_know_hiv
+if Q=1,skip R,S,T,U,V,W,X,Y
+ifV=0,skip W
+ifx=0,skip y
+if z=1, skip to AD
+ifAM=1,skip AN
+ifAP=1, skip to AQ, AR
+if AS=1, skip AT, AU
+if AV=1,skip AW
+if AX=0, skip AY
+if AZ=0, skip BA
+VartobeRemoved <- c("BC"-"DJ")
+
 alters.data$anal_sex_tot <- ifelse(alters.data$anal_sex_3months == 1,'SKIP',alters.data$anal_sex_tot)
 alters.data$anal_sex_role <- ifelse(alters.data$anal_sex_3months == 1,'SKIP',alters.data$anal_sex_role)
 alters.data$anal_sex_condom <- ifelse(alters.data$anal_sex_3months == 1,'SKIP',alters.data$anal_sex_condom)

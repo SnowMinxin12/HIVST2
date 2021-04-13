@@ -1,4 +1,4 @@
-### C21_Correlation.R [incomplete]
+### C21_Correlation.R [need to change into the matrixfornanalysis]
 ### generate correlation plot and tables, remove highly correlated variables
 ### author: Minxin Lu
 ### date: 2021-3-22
