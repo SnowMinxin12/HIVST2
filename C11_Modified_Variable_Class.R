@@ -73,7 +73,7 @@ factor_varS <- c('J','K','L','M','N','T','U','V','W','X','AW','AX','AY',
 ordinal_varS <- c('BC','BF','BH','BJ','BK','BM')
 
 #unrelated variables 
-unrelated_varS <- c('B')
+unrelated_varS <- c()
 
 #continous variables
 cont_varS <- setdiff(colnames(DataS),c(date_varS,binary_varS,factor_varS,ordinal_varS,unrelated_varS))

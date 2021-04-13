@@ -1,14 +1,14 @@
-### C14_Correlation.R
-### generate correlation plot and tables, and check if anything stands out
+### C21_Correlation.R [incomplete]
+### generate correlation plot and tables, remove highly correlated variables
 ### author: Minxin Lu
 ### date: 2021-3-22
-### input: C01_ReadData.R
+### input: C11_Modified_Variable_Class.R
 ### output: corrplot, corrtable
 
 library(fastDummies)
 library(caret)
 # source("C01_ReadData.R")
-source("C11_Check_Variable_Class.R")
+source("C11_Modified_Variable_Class.R")
 
 
 # remove the things that are not of interest in examining correlation
