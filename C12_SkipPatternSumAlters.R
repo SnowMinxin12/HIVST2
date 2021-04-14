@@ -4,16 +4,288 @@
 ### (1) This code re-code skip pattern different from missing data of 
 ### the three data files from C11_Check_Variable_Class.R (index, alters, follow-up)
 ### (2) summarize alter data by index
-### input: C11_Check_Variable_Class.R
-### output: 
+### input: C11_Modified_Variable_Class.R
+### output: alters.data.summarized, survey.data.summarized
 
 library(tidyverse)
 library(knitr)
+library(data.table)
+library(dplyr)
+library(reshape2)
 
-# setwd("")
-source("C11_Check_Variable_Class.R")
-survey.data <- DataS
+source("C11_Modified_Variable_Class.R")
+index.data <- DataB
 alters.data <- DataA
+survey.data <- DataS
+##### Index Baseline data [INCOMPLETE] ##### 
+# first column is DC=confirm_code
+names(index.data) <- c("confirm_code","deposit","application_date","year_of_birth","sex_birth","men_sex_1year",
+                       "arm","qr_code","marital_status","education_level","monthly_income","sex_orientation",
+                       "sex_orientation_disclose", "told_others_medwork","told_others_fam","told_others_friends","told_others_coll",
+                       "told_others_employ","told_others_others","anal_sex_3months","anal_sex_tot","anal_sex_role",
+                       "anal_sex_condom","anal_recent_condom","stable_3months","stable_condoms_3months",
+                       "casual_3months","casual_condoms_3months","use_rush","rush_freq","rush_freq_sex","women_3months","women_sex_tot",
+                       "women_condoms_3months","condom_recent_women","freq_discuss","share_know_hiv","share_know_test",
+                       "share_know_period","explain_interpret","followup_services","share_know_kit","recipient_notshared",
+                       "discuss_no","network_advice","network_information","seek_advice","volunteer_community","help_community",
+                       "dating_community","nondating_community","donated_community","change_community","none_community",
+                       "hang_out1","hang_out_rel1","hang_out_ident1","hang_out_orien1","hang_out_contact1",
+                       "hang_out_sex1","friend_told_fam1","friend_told_coll1","friend_told_het1","friend_told_medwork1",
+                       "friend_told_noone1","friend_told_notsure1","sex_friend_freq1","sex_friend_condom1",
+                       "friend_supply_kit1","hang_out2","hang_out_name2","hang_out_rel2","hang_out_ident2",
+                       "hang_out_orien2","hang_out_contact2","hang_out_sex2","friend_told_fam2","friend_told_coll2",
+                       "friend_told_het2","friend_told_medwork2","friend_told_noone2","friend_told_notsure2",
+                       "sex_friend_freq2","sex_friend_condom2","friend_supply_kit2",
+                       "hang_out3","hang_out_name3","hang_out_rel3","hang_out_ident3",
+                       "hang_out_orien3","hang_out_contact3","hang_out_sex3","friend_told_fam3","friend_told_coll3",
+                       "friend_told_het3","friend_told_medwork3","friend_told_noone3","friend_told_notsure3",
+                       "sex_friend_freq3","sex_friend_condom3","friend_supply_kit3",
+                       "hang_out4","other_sex_partners","hang_out_name4","hang_out_rel4","hang_out_ident4",
+                       "hang_out_orien4","friend_told_fam4","friend_told_coll4",
+                       "friend_told_het4","friend_told_medwork4","friend_told_noone4","friend_told_notsure4",
+                       "sex_friend_freq4","sex_friend_condom4","friend_supply_kit4",
+                       "hang_out5","hang_out_name5","hang_out_rel5","hang_out_ident5", # 5 and 6 are sexual partner
+                       "hang_out_orien5","friend_told_fam5","friend_told_coll5",
+                       "friend_told_het5","friend_told_medwork5","friend_told_noone5","friend_told_notsure5",
+                       "sex_friend_freq5","sex_friend_condom5","friend_supply_kit5","hang_out6","hang_out_name6","hang_out_rel6","hang_out_ident6",
+                       "hang_out_orien6","friend_told_fam6","friend_told_coll6",
+                       "friend_told_het6","friend_told_medwork6","friend_told_noone6","friend_told_notsure6",
+                       "sex_friend_freq6","sex_friend_condom6","friend_supply_kit6","prior_hiv_test","prior_test_method","obtain_prior_test",
+                       "last_time_tested","know_prior_result","test_kits_request","disseminate_kits","promotion_link","province","city",
+                       "test_kits_actual")
+# write.csv(data.frame(matrix(names(index.data),ncol=length(index.data),nrow=1)),file="baslinenames.csv")
+##### SKIP pattern for 309 baseline data #####
+# if N=anal_sex_3months=1, skip O=anal_sex_tot,P=anal_sex_role,Q=anal_sex_condom,
+# R=anal_recent_condom,S=stable_3months,T=stable_condoms_3months,U=casual_3months,
+# V=casual_condoms_3months
+index.data$anal_sex_tot <- as.factor(ifelse((index.data$anal_sex_3months == 1),'SKIP',index.data$anal_sex_tot))
+index.data$anal_sex_role <- as.factor(ifelse((index.data$anal_sex_3months == 1),'SKIP',as.character(index.data$anal_sex_role)))
+index.data$anal_sex_condom <- as.factor(ifelse((index.data$anal_sex_3months == 1),'SKIP',as.character(index.data$anal_sex_condom)))
+index.data$stable_3months <- as.factor(ifelse((index.data$anal_sex_3months == 1),'SKIP',as.character(index.data$stable_3months)))
+index.data$stable_condoms_3months <- as.factor(ifelse((index.data$anal_sex_3months == 1),'SKIP',as.character(index.data$stable_condoms_3months)))
+index.data$casual_3months <- as.factor(ifelse((index.data$anal_sex_3months == 1),'SKIP',as.character(index.data$casual_3months)))
+index.data$casual_condoms_3months <- as.factor(ifelse((index.data$anal_sex_3months == 1),'SKIP',as.character(index.data$casual_condoms_3months)))
+
+#if S=stable_3months=0, skip T=stable_condoms_3months
+index.data$stable_condoms_3months <- as.factor(ifelse((index.data$stable_3months == 0),'SKIP',as.character(index.data$stable_condoms_3months)))
+
+#if U=casual_3months=0, skip V=casual_condoms_3months
+index.data$casual_condoms_3months <- as.factor(ifelse((index.data$casual_3months == 0),'SKIP',as.character(index.data$casual_condoms_3months)))
+
+#if W=use_rush=1,skip X=rush_freq,Y=rush_freq_sex
+index.data$rush_freq <- as.factor(ifelse((index.data$use_rush == 1),'SKIP',as.character(index.data$rush_freq)))
+index.data$rush_freq_sex <- as.factor(ifelse((index.data$use_rush == 1),'SKIP',as.character(index.data$rush_freq_sex)))
+
+#if X=rush_freq=0,skip Y=rush_freq_sex
+index.data$rush_freq_sex <- as.factor(ifelse((index.data$rush_freq == 0),'SKIP',as.character(index.data$rush_freq_sex)))
+
+#if Z=women_3months=0, skip AA=women_sex_tot,AB=women_condoms_3months,AC=condom_recent_women
+index.data$women_sex_tot <- as.factor(ifelse((index.data$women_3months == 0),'SKIP',as.character(index.data$women_sex_tot)))
+index.data$women_condoms_3months <- as.factor(ifelse((index.data$women_3months == 0),'SKIP',as.character(index.data$women_condoms_3months)))
+index.data$condom_recent_women <- as.factor(ifelse((index.data$women_3months == 0),'SKIP',as.character(index.data$condom_recent_women)))
+
+#if AP=1,skip AQ.A-AQ.F,AR,AS,AT
+#if AU=1, skip to BR
+#if BA=1, skip BB.A-BB.F,BC,BD,BE
+#if BF=1, skip to BR
+# if BL=1,skip to BR
+#if BR=1,skip to CS
+#if CA=1,skip to CS
+#if CJ=1, skip to CS
+#if CS=1, skip to CX
+#if CT=prior_test_method=1,2,3,4,5, skip CU=obtain_prior_test, CV=last_time_tested,CW=know_prior_result
+index.data$obtain_prior_test <- as.factor(ifelse((index.data$prior_test_method %in% c(1,2,3,4,5)),'SKIP',as.character(index.data$obtain_prior_test)))
+index.data$last_time_tested <- as.factor(ifelse((index.data$prior_test_method %in% c(1,2,3,4,5)),'SKIP',as.character(index.data$last_time_tested)))
+index.data$know_prior_result <- as.factor(ifelse((index.data$prior_test_method %in% c(1,2,3,4,5)),'SKIP',as.character(index.data$know_prior_result)))
+
+##### modify variables #####
+# birth year to years-old
+index.data$age <- 2021-index.data$year_of_birth
+
+if(FALSE){
+  #hang_out1 depends on hang_out_rel1
+  hang_out_rel1
+  ##### summarize friends info for 309 index data #####
+  "hang_out1","hang_out_rel1","hang_out_ident1","hang_out_orien1","hang_out_contact1",
+  "hang_out_sex1","friend_told_fam1","friend_told_coll1","friend_told_het1","friend_told_medwork1",
+  "friend_told_noone1","friend_told_notsure1","sex_friend_freq1","sex_friend_condom1",
+  "friend_supply_kit1"
+  
+  #1. "hang_out1"
+  hang_outCol = index.data[,c("hang_out1","hang_out2","hang_out3","hang_out4","hang_out5","hang_out6")]
+  index.data$hang_out0Count <- ifelse(rowSums(is.na(hang_outCol))==5,NA,rowSums(hang_outCol == "0",na.rm=TRUE)) #count rows which are not all NA
+  index.data$hang_out0Proportion <- ifelse(rowSums(is.na(hang_outCol))==5,NA,rowSums(hang_outCol == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterSexCol))))
+  
+  ##### remove unrelated variables #####
+  VarBremoved <- c("deposit","application_date","sex_birth","year_of_birth")
+}
+
+
+##### 269 Alter data  #####
+names(alters.data) <- c("confirm_code","arm","response_date","result","index_or_alter",
+                        "st_code","province","city","confirmation","relation_index","age",
+                        "sex_birth","gender_identity","sex_orientation","sex_orientation_disclose",
+                        "told_others_medwork","told_others_fam","told_others_friends","told_others_coll",
+                        "told_others_employ","anal_sex_3months","anal_sex_tot","anal_sex_role",
+                        "anal_sex_condom","anal_recent_condom","stable_3months","stable_condoms_3months",
+                        "casual_3months","casual_condoms_3months","women_3months","women_sex_tot",
+                        "women_condoms_3months","condom_recent_women","share_know_hiv","share_know_test",
+                        "share_know_kit","explain_interpret","recipient_notneeded","recipient_present",
+                        "situation_a","situation_b","situation_c","situation_d","situation_e",
+                        "situation_f","situation_g","situation_h","time_to_test","kit_easy","test_with_index",
+                        "index_result","index_know_result","sex_with_index","sex_prior","partner_condom",
+                        "prior_hiv_test","prior_test_method","prior_test_result","current_test_result","med_confirm",
+                        "anal_sex_post","anal_condoms_post","women_sex_post","women_condoms_post","test_pref",
+                        "hang_out","hang_out_rel","hang_out_ident","hang_out_orien","hang_out_contact",
+                        "hang_out_sex","friend_told_fam","friend_told_coll","friend_told_het","friend_told_medwork",
+                        "friend_told_noone","friend_told_notsure","sex_friend_freq","sex_friend_condom",
+                        "friend_supply_kit","hang_out2","hang_out_name2","hang_out_rel2","hang_out_ident2",
+                        "hang_out_orien2","hang_out_contact2","hang_out_sex2","friend_told_fam2","friend_told_coll2",
+                        "friend_told_het2","friend_told_medwork2","friend_told_noone2","friend_told_notsure2",
+                        "sex_friend_freq2","sex_friend_condom2","friend_supply_kit2",
+                        "hang_out3","hang_out_name3","hang_out_rel3","hang_out_ident3",
+                        "hang_out_orien3","hang_out_contact3","hang_out_sex3","friend_told_fam3","friend_told_coll3",
+                        "friend_told_het3","friend_told_medwork3","friend_told_noone3","friend_told_notsure3",
+                        "sex_friend_freq3","sex_friend_condom3","friend_supply_kit3",
+                        "hang_out4","other_sex_partners","hang_out_name4","hang_out_rel4","hang_out_ident4",
+                        "hang_out_orien4","friend_told_fam4","friend_told_coll4",
+                        "friend_told_het4","friend_told_medwork4","friend_told_noone4","friend_told_notsure4",
+                        "sex_friend_freq4","sex_friend_condom4","friend_supply_kit4",
+                        "hang_out5","hang_out_name5","hang_out_rel5","hang_out_ident5",
+                        "hang_out_orien5","friend_told_fam5","friend_told_coll5",
+                        "friend_told_het5","friend_told_medwork5","friend_told_noone5","friend_told_notsure5",
+                        "sex_friend_freq5","sex_friend_condom5","friend_supply_kit5","hang_out6","hang_out_name6","hang_out_rel6","hang_out_ident6",
+                        "hang_out_orien6","friend_told_fam6","friend_told_coll6",
+                        "friend_told_het6","friend_told_medwork6","friend_told_noone6","friend_told_notsure6",
+                        "sex_friend_freq6","sex_friend_condom6","friend_supply_kit6","marital_status","house_reg",
+                        "education_level","monthly_income")
+# write.csv(data.frame(matrix(names(alters.data),ncol=159,nrow=1)),file="altersnames.csv")
+
+##### SKIP pattern for 269 alter data #####
+## SKIP pattern coding using ifelse() logic
+
+
+# if sex_birth=1, skip TO share_know_hiv: all sex_birth are either 0 or NA
+#if anal_sex_3months=1,skip R,S,T,U,V,W,X,Y
+alters.data$anal_sex_tot <- ifelse((alters.data$anal_sex_3months == 1)&(is.na(alters.data$anal_sex_tot)),'SKIP',alters.data$anal_sex_tot)
+alters.data$anal_sex_role <- ifelse((alters.data$anal_sex_3months == 1)&(is.na(alters.data$anal_sex_role)),'SKIP',alters.data$anal_sex_role)
+alters.data$anal_sex_role <- ifelse(alters.data$anal_sex_role=="1",0,alters.data$anal_sex_role)
+alters.data$anal_sex_role <- ifelse(alters.data$anal_sex_role=="2",1,alters.data$anal_sex_role)
+alters.data$anal_sex_role <- ifelse(alters.data$anal_sex_role=="3",2,alters.data$anal_sex_role)
+alters.data$anal_sex_role <- as.factor(alters.data$anal_sex_role)
+
+alters.data$anal_sex_condom <- ifelse((alters.data$anal_sex_3months == 1)&(is.na(alters.data$anal_sex_condom)),'SKIP',alters.data$anal_sex_condom)
+alters.data$anal_sex_condom <- ifelse(alters.data$anal_sex_condom=="1",0,alters.data$anal_sex_condom)
+alters.data$anal_sex_condom <- ifelse(alters.data$anal_sex_condom=="2",1,alters.data$anal_sex_condom)
+alters.data$anal_sex_condom <- ifelse(alters.data$anal_sex_condom=="3",2,alters.data$anal_sex_condom)
+alters.data$anal_sex_condom <- ifelse(alters.data$anal_sex_condom=="4",3,alters.data$anal_sex_condom)
+alters.data$anal_sex_condom <- as.factor(alters.data$anal_sex_condom)
+
+alters.data$anal_recent_condom <- ifelse((alters.data$anal_sex_3months == 1)&(is.na(alters.data$anal_recent_condom)),'SKIP',alters.data$anal_recent_condom)
+# if stable_3months=0,skip stable_condoms_3months
+alters.data$stable_3months <-ifelse((alters.data$anal_sex_3months == 1)&(is.na(alters.data$stable_3months)),'SKIP',alters.data$stable_3months)
+alters.data$stable_condoms_3months <- ifelse((alters.data$stable_3months == 0)&(is.na(alters.data$stable_condoms_3months)),'SKIP',alters.data$stable_condoms_3months)
+# if casual_3months=0,skip casual_condoms_3months
+alters.data$casual_3months <- ifelse((alters.data$anal_sex_3months == 1)&(is.na(alters.data$casual_3months)),'SKIP',alters.data$casual_3months)
+alters.data$casual_condoms_3months <- ifelse((alters.data$casual_3months == 0)&(is.na(alters.data$casual_condoms_3months)),'SKIP',alters.data$casual_condoms_3months)
+#if women_3months=1, skip women_sex_tot, women_condoms_3months, condom_recent_women
+alters.data$women_sex_tot <- ifelse((alters.data$women_3months == 1),'SKIP',alters.data$women_sex_tot)
+
+alters.data$women_condoms_3months <- ifelse((alters.data$women_3months == 1),'SKIP',alters.data$women_condoms_3months)
+alters.data$women_condoms_3months <- ifelse(alters.data$women_condoms_3months == "1",0,alters.data$women_condoms_3months)
+alters.data$women_condoms_3months <- ifelse(alters.data$women_condoms_3months == "2",1,alters.data$women_condoms_3months)
+alters.data$women_condoms_3months <- ifelse(alters.data$women_condoms_3months == "3",2,alters.data$women_condoms_3months)
+alters.data$women_condoms_3months <- ifelse(alters.data$women_condoms_3months == "4",3,alters.data$women_condoms_3months)
+alters.data$women_condoms_3months <- as.factor(alters.data$women_condoms_3months)
+
+alters.data$condom_recent_women <- ifelse((alters.data$women_3months == 1),'SKIP',alters.data$condom_recent_women)
+
+#if test_with_index=1,skip index_result
+alters.data$index_result <- ifelse((alters.data$test_with_index == 1),'SKIP',alters.data$index_result)
+alters.data$index_result <- ifelse(alters.data$index_result=="1",0,alters.data$index_result)
+alters.data$index_result <- ifelse(alters.data$index_result=="2",1,alters.data$index_result)
+alters.data$index_result <- ifelse(alters.data$index_result=="3",2,alters.data$index_result)
+alters.data$index_result <- as.factor(alters.data$index_result)
+
+#if AP=sex_with_index=1, skip AQ=sex_prior, AR=partner_condom
+alters.data$sex_prior <- ifelse((alters.data$sex_with_index == 1),'SKIP',alters.data$sex_prior)
+alters.data$partner_condom <- ifelse((alters.data$sex_with_index == 1),'SKIP',alters.data$partner_condom)
+
+#if AS=prior_hiv_test=1, skip AT=prior_test_method, AU=prior_test_result
+alters.data$prior_test_method <- ifelse((alters.data$prior_hiv_test == 1),'SKIP',alters.data$prior_test_method)
+alters.data$prior_test_method <- ifelse(alters.data$prior_test_method==1,0,alters.data$prior_test_method)
+alters.data$prior_test_method <- ifelse(alters.data$prior_test_method==2,1,alters.data$prior_test_method)
+alters.data$prior_test_method <- as.factor(alters.data$prior_test_method)
+
+#if AV=current_test_result=1,skip AW=med_confirm
+alters.data$med_confirm <- ifelse((alters.data$current_test_result == 1),'SKIP',alters.data$med_confirm)
+alters.data$med_confirm <- ifelse(alters.data$med_confirm==1,0,alters.data$med_confirm)
+alters.data$med_confirm <- ifelse(alters.data$med_confirm==2,1,alters.data$med_confirm)
+alters.data$med_confirm <-as.factor(alters.data$med_confirm)
+
+#if AX=anal_sex_post=0, skip AY=anal_condoms_post
+alters.data$anal_condoms_post <- ifelse((alters.data$anal_sex_post == 0),'SKIP',alters.data$anal_condoms_post)
+alters.data$anal_condoms_post <- ifelse(alters.data$anal_condoms_post==1,0,alters.data$anal_condoms_post)
+alters.data$anal_condoms_post <- ifelse(alters.data$anal_condoms_post==2,1,alters.data$anal_condoms_post)
+alters.data$anal_condoms_post <- ifelse(alters.data$anal_condoms_post==3,2,alters.data$anal_condoms_post)
+alters.data$anal_condoms_post <- ifelse(alters.data$anal_condoms_post==4,3,alters.data$anal_condoms_post)
+alters.data$anal_condoms_post <- as.factor(alters.data$anal_condoms_post)
+
+#if AZ=women_sex_post=0, skip BA=women_condoms_post
+alters.data$women_condoms_post <- ifelse((alters.data$women_sex_post == 0),'SKIP',alters.data$women_condoms_post)
+alters.data$women_condoms_post <- ifelse(alters.data$women_condoms_post==1,0,alters.data$women_condoms_post)
+alters.data$women_condoms_post <- ifelse(alters.data$women_condoms_post==2,1,alters.data$women_condoms_post)
+alters.data$women_condoms_post <- ifelse(alters.data$women_condoms_post==3,2,alters.data$women_condoms_post)
+alters.data$women_condoms_post <- ifelse(alters.data$women_condoms_post==4,3,alters.data$women_condoms_post)
+alters.data$women_condoms_post <- as.factor(alters.data$women_condoms_post)
+
+##### remove alter's alters in 269 alters data#####
+# remove alter's alters information BC=hang_out to DJ=friend_supply_kit6
+altersalters <- c("hang_out","hang_out_rel","hang_out_ident","hang_out_orien","hang_out_contact",
+                  "hang_out_sex","friend_told_fam","friend_told_coll","friend_told_het","friend_told_medwork",
+                  "friend_told_noone","friend_told_notsure","sex_friend_freq","sex_friend_condom",
+                  "friend_supply_kit","hang_out2","hang_out_name2","hang_out_rel2","hang_out_ident2",
+                  "hang_out_orien2","hang_out_contact2","hang_out_sex2","friend_told_fam2","friend_told_coll2",
+                  "friend_told_het2","friend_told_medwork2","friend_told_noone2","friend_told_notsure2",
+                  "sex_friend_freq2","sex_friend_condom2","friend_supply_kit2",
+                  "hang_out3","hang_out_name3","hang_out_rel3","hang_out_ident3",
+                  "hang_out_orien3","hang_out_contact3","hang_out_sex3","friend_told_fam3","friend_told_coll3",
+                  "friend_told_het3","friend_told_medwork3","friend_told_noone3","friend_told_notsure3",
+                  "sex_friend_freq3","sex_friend_condom3","friend_supply_kit3",
+                  "hang_out4","other_sex_partners","hang_out_name4","hang_out_rel4","hang_out_ident4",
+                  "hang_out_orien4","friend_told_fam4","friend_told_coll4",
+                  "friend_told_het4","friend_told_medwork4","friend_told_noone4","friend_told_notsure4",
+                  "sex_friend_freq4","sex_friend_condom4","friend_supply_kit4",
+                  "hang_out5","hang_out_name5","hang_out_rel5","hang_out_ident5",
+                  "hang_out_orien5","friend_told_fam5","friend_told_coll5",
+                  "friend_told_het5","friend_told_medwork5","friend_told_noone5","friend_told_notsure5",
+                  "sex_friend_freq5","sex_friend_condom5","friend_supply_kit5","hang_out6","hang_out_name6","hang_out_rel6","hang_out_ident6",
+                  "hang_out_orien6","friend_told_fam6","friend_told_coll6",
+                  "friend_told_het6","friend_told_medwork6","friend_told_noone6","friend_told_notsure6",
+                  "sex_friend_freq6","sex_friend_condom6","friend_supply_kit6")
+alters.data <- alters.data[,!colnames(alters.data) %in% altersalters]
+##### remove from analysis for now #####
+Varremoved <- c("response_date","index_or_alter")
+alters.data <- alters.data[,!colnames(alters.data) %in% Varremoved]
+
+##### summarize alters for 269 alter data #####
+
+alters.varname = colnames(alters.data)[2]
+alters.data.summarized <- reshape2::dcast(data=alters.data,
+                                          as.formula(paste0("confirm_code ~", alters.varname)),
+                                          fun.aggregate = length,
+                                          value.var = alters.varname)
+colnames(alters.data.summarized)=c("confirm_code",paste0(alters.varname,"_",colnames(alters.data.summarized)[-1]))
+for (i in 3:ncol(alters.data)){
+  alters.varname = colnames(alters.data)[i]
+  alters.var2 <- reshape2::dcast(data=alters.data,
+                                 as.formula(paste0("confirm_code ~", alters.varname)),
+                                 fun.aggregate = length,
+                                 value.var = alters.varname)
+  colnames(alters.var2)=c("confirm_code",paste0(alters.varname,"_",colnames(alters.var2)[-1]))
+  alters.data.summarized=merge(x=alters.data.summarized,y=alters.var2, by="confirm_code")
+}
+
 
 
 ##### 207 Survey data names #####
@@ -37,24 +309,60 @@ names(survey.data) <- c("survey_date","confirm_code","kits_no","kits_dist",
                         "anal_recent_condom","stable_3months","stable_condoms_3months",
                         "casual_3months","casual_condoms_3months","use_rush","rush_freq",
                         "new_drugs_1month","women_3months","women_condoms_3months","test_pref")
-# write.csv(data.frame(matrix(names(survey.data),ncol=118,nrow=1)),file="surveynames.csv")
+# write.csv(data.frame(matrix(names(survey.data),ncol=73,nrow=1)),file="surveynames.csv")
 ##### SKIP pattern for 207 survey data #####
 # SKIP pattern coding using ifelse() logic 
-survey.data$health_center <- ifelse(survey.data$result_mostrecent %in% c(1,2),'SKIP',survey.data$health_center)
 
-survey.data$anal_sex_tot <- ifelse(survey.data$anal_sex_3months == 1,'SKIP',survey.data$anal_sex_tot)
-survey.data$anal_sex_role <- ifelse(survey.data$anal_sex_3months == 1,'SKIP',survey.data$anal_sex_role)
+survey.data$health_center <- ifelse((survey.data$result_mostrecent %in% c(1,2))&is.na(survey.data$health_center),'SKIP',survey.data$health_center)
+survey.data$health_center <- ifelse(survey.data$health_center=="1","0",survey.data$health_center)# correction: previous step automatically writes 0 as 1
+survey.data$health_center <- as.factor(survey.data$health_center)
+
+#numeric -> factor because added "skip"
+survey.data$anal_sex_tot <- ifelse((survey.data$anal_sex_3months == 1)&is.na(survey.data$anal_sex_tot),'SKIP',survey.data$anal_sex_tot)
+survey.data$anal_sex_tot <- as.factor(survey.data$anal_sex_tot)
+
+survey.data$anal_sex_role <- ifelse((survey.data$anal_sex_3months == 1)&is.na(survey.data$anal_sex_role),'SKIP',survey.data$anal_sex_role)
+survey.data$anal_sex_role <- ifelse(survey.data$anal_sex_role == "1",'0',survey.data$anal_sex_role)
+survey.data$anal_sex_role <- ifelse(survey.data$anal_sex_role == "2",'1',survey.data$anal_sex_role)
+survey.data$anal_sex_role <- ifelse(survey.data$anal_sex_role == "3",'2',survey.data$anal_sex_role)
+survey.data$anal_sex_role <- as.factor(survey.data$anal_sex_role)
+
 survey.data$anal_sex_condom <- ifelse(survey.data$anal_sex_3months == 1,'SKIP',survey.data$anal_sex_condom)
+survey.data$anal_sex_condom <- ifelse(survey.data$anal_sex_condom == "1",0,survey.data$anal_sex_condom)
+survey.data$anal_sex_condom <- ifelse(survey.data$anal_sex_condom == "2",1,survey.data$anal_sex_condom)
+survey.data$anal_sex_condom <- ifelse(survey.data$anal_sex_condom == "3",2,survey.data$anal_sex_condom)
+survey.data$anal_sex_condom <- ifelse(survey.data$anal_sex_condom == "4",3,survey.data$anal_sex_condom)
+survey.data$anal_sex_condom <- as.factor(survey.data$anal_sex_condom)
+
+
 survey.data$anal_recent_condom <- ifelse(survey.data$anal_sex_3months == 1,'SKIP',survey.data$anal_recent_condom)
+survey.data$anal_recent_condom <- as.factor(survey.data$anal_recent_condom)
 
 survey.data$stable_condoms_3months <- ifelse(survey.data$stable_3months == 0,'SKIP',survey.data$stable_condoms_3months)
-
+survey.data$stable_condoms_3months <- ifelse(survey.data$stable_condoms_3months == "1",0,survey.data$stable_condoms_3months)
+survey.data$stable_condoms_3months <- ifelse(survey.data$stable_condoms_3months == "2",1,survey.data$stable_condoms_3months)
+survey.data$stable_condoms_3months <- ifelse(survey.data$stable_condoms_3months == "3",2,survey.data$stable_condoms_3months)
+survey.data$stable_condoms_3months <- ifelse(survey.data$stable_condoms_3months == "4",3,survey.data$stable_condoms_3months)
 survey.data$casual_condoms_3months <- ifelse(survey.data$casual_3months == 0,'SKIP',survey.data$casual_condoms_3months)
+survey.data$casual_condoms_3months <- as.factor(survey.data$casual_condoms_3months)
 
 survey.data$rush_freq <- ifelse(survey.data$use_rush == 1,'SKIP',survey.data$rush_freq)
-survey.data$new_drugs_1month <- ifelse(survey.data$use_rush == 1,'SKIP',survey.data$new_drugs_1month)
+survey.data$rush_freq <- ifelse(survey.data$rush_freq == "1",0,survey.data$rush_freq)
+survey.data$rush_freq <- ifelse(survey.data$rush_freq == "2",1,survey.data$rush_freq)
+survey.data$rush_freq <- ifelse(survey.data$rush_freq == "3",2,survey.data$rush_freq)
+survey.data$rush_freq <- ifelse(survey.data$rush_freq == "4",3,survey.data$rush_freq)
+survey.data$rush_freq <-as.factor(survey.data$rush_freq)
 
-survey.data$women_condoms_3months <- ifelse(survey.data$women_3months == 0,'SKIP',survey.data$women_condoms_3months)
+survey.data$new_drugs_1month <- ifelse(survey.data$use_rush == 1,'SKIP',survey.data$new_drugs_1month)
+survey.data$new_drugs_1month <- ifelse(survey.data$new_drugs_1month == "1",0,survey.data$new_drugs_1month)
+survey.data$new_drugs_1month <- ifelse(survey.data$new_drugs_1month == "2",1,survey.data$new_drugs_1month)
+survey.data$new_drugs_1month <- ifelse(survey.data$new_drugs_1month == "3",2,survey.data$new_drugs_1month)
+survey.data$new_drugs_1month <- ifelse(survey.data$new_drugs_1month == "4",3,survey.data$new_drugs_1month)
+survey.data$new_drugs_1month <- as.factor(survey.data$new_drugs_1month)
+
+survey.data$women_condoms_3months <- ifelse((survey.data$women_3months == 0)&is.na(survey.data$women_condoms_3months),'SKIP',survey.data$women_condoms_3months)
+survey.data$women_condoms_3months <- ifelse(survey.data$women_condoms_3months == "1",0,survey.data$women_condoms_3months)
+survey.data$women_condoms_3months <- as.factor(survey.data$women_condoms_3months)
 
 survey.data$pt_sex_first <- ifelse(survey.data$relation_first %in% 2,'SKIP',survey.data$pt_sex_first)
 survey.data$pt_sex_second <- ifelse(survey.data$relation_second %in% 2,'SKIP',survey.data$pt_sex_second)
@@ -154,121 +462,8 @@ VartobeRemoved <- c("sex_first","sex_second","sex_third","sex_fourth","sex_fifth
                     "pt_sex_first","pt_sex_second","pt_sex_third","pt_sex_fourth","pt_sex_fifth",
                     "sex_before_first","sex_before_second","sex_before_third","sex_before_fourth","sex_before_fifth",
                     "condom_first","condom_second","condom_third","condom_fourth","condom_fifth")
+survey.data.summarized <- survey.data[,!colnames(survey.data) %in% VartobeRemoved]
 remove(AlterSexCol,AlterRelationCol,AlterPTCol,AlterHivrCol,AlterPT_SexCol,
        AlterSex_BeforeCol,AlterCondomCol)
 
-##### 269 Alter data names #####
-names(alters.data) <- c("confirm_code","arm","response_date","result","index_or_alter",
-                        "st_code","province","city","confirmation","relation_index","age",
-                        "sex_birth","gender_identity","sex_orientation","sex_orientation_disclose",
-                        "told_others_medwork","told_others_fam","told_others_friends","told_others_coll",
-                        "told_others_employ","anal_sex_3months","anal_sex_tot","anal_sex_role",
-                        "anal_sex_condom","anal_recent_condom","stable_3months","stable_condoms_3months",
-                        "casual_3months","casual_condoms_3months","women_3months","women_sex_tot",
-                        "women_condoms_3months","condom_recent_women","share_know_hiv","share_know_test",
-                        "share_know_kit","explain_interpret","recipient_notneeded","recipient_present",
-                        "situation_a","situation_b","situation_c","situation_d","situation_e",
-                        "situation_f","situation_g","situation_h","time_to_test","kit_easy","test_with_index",
-                        "index_result","index_know_result","sex_with_index","sex_prior","partner_condom",
-                        "prior_hiv_test","prior_test_method","prior_test_result","current_test_result","med_confirm",
-                        "anal_sex_post","anal_condoms_post","women_sex_post","women_condoms_post","test_pref",
-                        "hang_out","hang_out_rel","hang_out_ident","hang_out_orien","hang_out_contact",
-                        "hang_out_sex","friend_told_fam","friend_told_coll","friend_told_het","friend_told_medwork",
-                        "friend_told_noone","friend_told_notsure","sex_friend_freq","sex_friend_condom",
-                        "friend_supply_kit","hang_out2","hang_out_name2","hang_out_rel2","hang_out_ident2",
-                        "hang_out_orien2","hang_out_contact2","hang_out_sex2","friend_told_fam2","friend_told_coll2",
-                        "friend_told_het2","friend_told_medwork2","friend_told_noone2","friend_told_notsure2",
-                        "sex_friend_freq2","sex_friend_condom2","friend_supply_kit2",
-                        "hang_out3","hang_out_name3","hang_out_rel3","hang_out_ident3",
-                        "hang_out_orien3","hang_out_contact3","hang_out_sex3","friend_told_fam3","friend_told_coll3",
-                        "friend_told_het3","friend_told_medwork3","friend_told_noone3","friend_told_notsure3",
-                        "sex_friend_freq3","sex_friend_condom3","friend_supply_kit3",
-                        "hang_out4","other_sex_partners","hang_out_name4","hang_out_rel4","hang_out_ident4",
-                        "hang_out_orien4","friend_told_fam4","friend_told_coll4",
-                        "friend_told_het4","friend_told_medwork4","friend_told_noone4","friend_told_notsure4",
-                        "sex_friend_freq4","sex_friend_condom4","friend_supply_kit4",
-                        "hang_out5","hang_out_name5","hang_out_rel5","hang_out_ident5",
-                        "hang_out_orien5","friend_told_fam5","friend_told_coll5",
-                        "friend_told_het5","friend_told_medwork5","friend_told_noone5","friend_told_notsure5",
-                        "sex_friend_freq5","sex_friend_condom5","friend_supply_kit5","hang_out6","hang_out_name6","hang_out_rel6","hang_out_ident6",
-                        "hang_out_orien6","friend_told_fam6","friend_told_coll6",
-                        "friend_told_het6","friend_told_medwork6","friend_told_noone6","friend_told_notsure6",
-                        "sex_friend_freq6","sex_friend_condom6","friend_supply_kit6","marital_status","house_reg",
-                        "education_level","monthly_income")
-# write.csv(data.frame(matrix(names(alters.data),ncol=159,nrow=1)),file="altersnames.csv")
-
-##### SKIP pattern for 269 alter data #####
-## SKIP pattern coding using ifelse() logic.  INCOMPLETE
-if sex_birth=1, skip to share_know_hiv
-if Q=1,skip R,S,T,U,V,W,X,Y
-ifV=0,skip W
-ifx=0,skip y
-if z=1, skip to AD
-ifAM=1,skip AN
-ifAP=1, skip to AQ, AR
-if AS=1, skip AT, AU
-if AV=1,skip AW
-if AX=0, skip AY
-if AZ=0, skip BA
-VartobeRemoved <- c("BC"-"DJ")
-
-alters.data$anal_sex_tot <- ifelse(alters.data$anal_sex_3months == 1,'SKIP',alters.data$anal_sex_tot)
-alters.data$anal_sex_role <- ifelse(alters.data$anal_sex_3months == 1,'SKIP',alters.data$anal_sex_role)
-alters.data$anal_sex_condom <- ifelse(alters.data$anal_sex_3months == 1,'SKIP',alters.data$anal_sex_condom)
-alters.data$anal_recent_condom <- ifelse(alters.data$anal_sex_3months == 1,'SKIP',alters.data$anal_recent_condom)
-
-alters.data$stable_condoms_3months <- ifelse(alters.data$stable_3months == 0,'SKIP',alters.data$stable_condoms_3months)
-
-alters.data$casual_condoms_3months <- ifelse(alters.data$casual_3months == 0,'SKIP',alters.data$casual_condoms_3months)
-
-alters.data$women_condoms_3months <- ifelse(alters.data$women_3months == 0,'SKIP',alters.data$women_condoms_3months)
-
-
-
-alters.data$confirm_code_miss <- ifelse(is.na(alters.data$confirm_code),NA,1)
-
-##### summarize alters for 269 alter data
-
-##### Index Baseline data names #####
-names(index.data) <- c("deposit","application_date","year_of_birth","sex_birth","men_sex_1year",
-                       "arm","qr_code","marital_status","education_level","monthly_income","sex_orientation",
-                       "sex_orientation_disclose", "told_others_medwork","told_others_fam","told_others_friends","told_others_coll",
-                       "told_others_employ","told_others_others","anal_sex_3months","anal_sex_tot","anal_sex_role",
-                       "anal_sex_condom","anal_recent_condom","stable_3months","stable_condoms_3months",
-                       "casual_3months","casual_condoms_3months","use_rush","rush_freq","rush_freq_sex","women_3months","women_sex_tot",
-                       "women_condoms_3months","condom_recent_women","freq_discuss","share_know_hiv","share_know_test",
-                       "share_know_period","explain_interpret","followup_services","share_know_kit","recipient_notshared",
-                       "discuss_no","network_advice","network_information","seek_advice","volunteer_community","help_community",
-                       "dating_community","nondating_community","donated_community","change_community","none_community",
-                       "hang_out","hang_out_rel","hang_out_ident","hang_out_orien","hang_out_contact",
-                       "hang_out_sex","friend_told_fam","friend_told_coll","friend_told_het","friend_told_medwork",
-                       "friend_told_noone","friend_told_notsure","sex_friend_freq","sex_friend_condom",
-                       "friend_supply_kit","hang_out2","hang_out_name2","hang_out_rel2","hang_out_ident2",
-                       "hang_out_orien2","hang_out_contact2","hang_out_sex2","friend_told_fam2","friend_told_coll2",
-                       "friend_told_het2","friend_told_medwork2","friend_told_noone2","friend_told_notsure2",
-                       "sex_friend_freq2","sex_friend_condom2","friend_supply_kit2",
-                       "hang_out3","hang_out_name3","hang_out_rel3","hang_out_ident3",
-                       "hang_out_orien3","hang_out_contact3","hang_out_sex3","friend_told_fam3","friend_told_coll3",
-                       "friend_told_het3","friend_told_medwork3","friend_told_noone3","friend_told_notsure3",
-                       "sex_friend_freq3","sex_friend_condom3","friend_supply_kit3",
-                       "hang_out4","other_sex_partners","hang_out_name4","hang_out_rel4","hang_out_ident4",
-                       "hang_out_orien4","friend_told_fam4","friend_told_coll4",
-                       "friend_told_het4","friend_told_medwork4","friend_told_noone4","friend_told_notsure4",
-                       "sex_friend_freq4","sex_friend_condom4","friend_supply_kit4","hant_out5",
-                       "hang_out_name5","hang_out_rel5","hang_out_ident5",
-                       "hang_out_orien5","friend_told_fam5","friend_told_coll5",
-                       "friend_told_het5","friend_told_medwork5","friend_told_noone5","friend_told_notsure5",
-                       "sex_friend_freq5","sex_friend_condom5","friend_supply_kit5","hang_out6","hang_out_name6","hang_out_rel6","hang_out_ident6",
-                       "hang_out_orien6","friend_told_fam6","friend_told_coll6",
-                       "friend_told_het6","friend_told_medwork6","friend_told_noone6","friend_told_notsure6",
-                       "sex_friend_freq6","sex_friend_condom6","friend_supply_kit6","prior_hiv_test","prior_test_method","obtain_prior_test",
-                       "last_time_tested","know_prior_result","test_kits_request","disseminate_kits","promotion_link","province","city","confirm_code",
-                       "test_kits_actual")
-
-## Determining how many missing/the missingness pattern of the three data sets
-sapply(survey.data, function(x) sum(is.na(x)))
-sapply(alters.data, function(x) sum(is.na(x)))
-sapply(index.data, function(x) sum(is.na(x)))
-sapply(survey.data.misstab, function(x) sum(is.na(x)))
-sapply(alters.data.misstab, function(x) sum(is.na(x)))
 

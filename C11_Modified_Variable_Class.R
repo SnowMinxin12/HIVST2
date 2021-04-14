@@ -1,4 +1,5 @@
 ### C11_Check_Variable_Class.R
+### add 1 to all factor and binary variables 
 ### Check factors as factors, numbers as numbers
 ### author: Zhentao Yu, Minxin Lu
 ### date: 2021-3-31
@@ -50,7 +51,7 @@ dataB.c11[cont_varB] = lapply(dataB.c11[cont_varB],as.numeric)
 
 
 # remove the initial names of closest people
-dataB.c11 <- dataB.c11[ , -which(names(dataB.c11) %in% tobedeleted_varB)]
+# dataB.c11 <- dataB.c11[ , -which(names(dataB.c11) %in% tobedeleted_varB)]
 DataB <- dataB.c11
 
 ##### Survey 207 data #####
