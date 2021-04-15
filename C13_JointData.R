@@ -1,9 +1,9 @@
 ### C13_JointData
 ### author: Minxin Lu
 ### date: 2021-4-14
-### (1) join 3 datasets together
-### input: C12SkipPatterbSumAlters.R
-### output: one joint data by index confirmation code
+### join 3 datasets together and removed some identification variables
+### input: summarizedB.csv, summarizedA.csv, summarizedS.csv from C12
+### output: jointdata.csv=one joint data by index confirmation code
 summarizedB <- read_csv("../data/summarizedB.csv")
 summarizedA <- read_csv("../data/summarizedA.csv")
 summarizedS <- read_csv("../data/summarizedS.csv")
@@ -21,7 +21,7 @@ summarizedBAS <- merge(x=summarizedBA,y=summarizedS, by.x="B.confirm_code",by.y=
 
 # remove irrelavent variables
 varRemoved <- c("B.confirm_code","B.hang_out_name","B.hang_out_name2","B.hang_out_name3","B.hang_out_name4",
-                "B.hang_out_name5","B.hang_out_name6")
+                "B.hang_out_name5","B.hang_out_name6","S.survey_date")
 summarizedBAS <- summarizedBAS[,!colnames(summarizedBAS) %in% varRemoved]
 
 write.csv(summarizedBAS, file="../data/jointdata.csv")

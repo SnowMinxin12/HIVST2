@@ -1,4 +1,4 @@
-### C22_Correlation.R 
+### XC22_CorrelationB.R 
 ### generate correlation plot and tables, remove highly correlated variables
 ### author: Minxin Lu
 ### date: 2021-4-14
@@ -8,29 +8,51 @@
 library(fastDummies)
 library(caret)
 jointdata1 <- read_csv("../data/jointdata1.csv")
-jointdata1.c22 <- jointdata1[,colnames(jointdata1)!="X1"]
+jointdata1 <- jointdata1[,colnames(jointdata1)!="X1"]
 
-var_remove <- c(# very low prevalence
-  "B.hang_out_ident2Count","B.hang_out_ident2Proportion",
-  "A.casual_3months_8","A.casual_3months_7","A.stable_3months_8","A.women_sex_post_8",
-  "S.situation_f","S.situation_e","S.health_center_SKIP",
-  "A.sex_birth_0",# all should be zero so count does not make sense,
-  "A.situation_b_1",# all ones so count does not make sense
-  "A.situation_d_0", "A.situation_d_1","A.situation_e_1","A.situation_g_1","A.situation_f_1"
-)
-jointdata1.c22 <- jointdata1.c22[,!colnames(jointdata1.c22) %in% var_remove]
 
-write.csv(jointdata1.c22,file="../data/jointdata.c22.csv")
+# remove the things that are not of interest in examining correlation
+dataB.c14 <- DataB %>% select(-c())
+
+
+# factor variables
+factor_varB <- c("F","H","K","P","AH","CT","CU","CW","DA","DB")
+#ordinal variables
+ordinal_varB <- c("I","J","Q","T","V","X","Y","AB","AD","AF","AG","AI","CV")
+#continous variables
+cont_varB <- setdiff(colnames(dataB.c14),c(factor_varB,ordinal_varB))
+
+dataB.c14[factor_varB] = lapply(dataB.c14[factor_varB],factor)
+dataB.c14[ordinal_varB] = lapply(dataB.c14[ordinal_varB],factor)
+dataB.c14$S <- as.numeric(dataB.c14$S)
+dataB.c14$U <- as.numeric(dataB.c14$U)
+
 
 # change factors to dummies
-dummy.c22 <- fastDummies::dummy_cols(jointdata1.c22, remove_first_dummy = TRUE, ignore_na=TRUE)
+dummyB.c14 <- fastDummies::dummy_cols(dataB.c14, remove_first_dummy = TRUE, ignore_na=TRUE)
+dummyB.c14 <- dummyB.c14 %>% select(-all_of(c(factor_varB,ordinal_varB)))
+
 
 ##### factors to numbers #####
-numeric.c22 <- dummy.c22
-numeric.c22 <- apply(numeric.c22,2,as.numeric)
+numericB.c14 <- dummyB.c14.cleaned
+numericB.c14 = apply(numericB.c14,2,as.numeric)
+
+
+##### corr #####
+corr1 <- jointdata1[,1:3] %>%
+  as.matrix %>%
+  cor(use = "pairwise.complete.obs")%>%
+  as.data.frame %>%
+  rownames_to_column(var = 'var1') %>%
+  gather(var2, value, -var1)
+write.csv(corr1, file = "../output/correlation.csv")
+
+##### check for large correlation >0.8#####
+large_corr1 <- filter(corr1, (abs(value) > .6 & value != 1))
+write.csv(large_corr1, file = "../output/large_corr.csv")
 
 # remove repeated correlations
-corr1_bar <- numeric.c22 %>% 
+corr1_bar <- numericB.c14 %>% 
   as.matrix %>%
   cor(use = "pairwise.complete.obs")%>%
   as.data.frame
@@ -42,31 +64,28 @@ corr1_bar_col <- corr1_bar %>%
 corr1_bar_col$value <- as.numeric(corr1_bar_col$value)
 
 # plot large correlation
-large_corr90_bar <- filter(as.data.frame(corr1_bar_col), (abs(value) > .9))
-large_corr95_bar <- filter(as.data.frame(corr1_bar_col), (abs(value) > .95))
+large_corr1_bar <- filter(as.data.frame(corr1_bar_col), (abs(value) > .6))
+large_corr1_bar$value <- round(large_corr1_bar$value,3)
+large_corr1_bar <- large_corr1_bar %>% mutate(corrName=paste(var1,"+",var2),
+                                              sign = ifelse(value>0,"pos","neg"),
+                                              absValue = abs(value))
 
-
-large_corr95_bar$value <- round(large_corr95_bar$value,3)
-large_corr95_bar <- large_corr95_bar %>% mutate(corrName=paste(var1,"+",var2),
-                                      sign = ifelse(value>0,"pos","neg"),
-                                      absValue = abs(value))
-
-pdf("../output/large_corrplot0.95.pdf") 
-ggplot(data = large_corr95_bar, aes(x=reorder(corrName,absValue),y=absValue,fill=sign))+
+pdf("../output/large_corrplot0.6.pdf") 
+ggplot(data = large_corr1_bar, aes(x=reorder(corrName,absValue),y=absValue,fill=sign))+
   geom_bar(stat="identity")+
   geom_text(aes(label=value),vjust=0.5,hjust=1.5,color="black",size=3.5)+
-  ggtitle("Variable pairs with correlation > 0.95 or <-0.95") +
+  ggtitle("Variable pairs with correlation > 0.6 or <-0.6") +
   xlab("Variable pairs") + ylab("correlation")+
   coord_flip()
 dev.off()
 
-#[INCOMPLETE]
+
 ##### check for correlation with DD #####
 DD_corr1 <-corr1 %>% filter(var1=="DD",var2!="DD")
 DD_corr1$value <- round(DD_corr1$value,3)
 DD_corr2 <- DD_corr1 %>% mutate(corrName=paste(var1,"+",var2),
-                                      sign = ifelse(value>0,"pos","neg"),
-                                      absValue = abs(value))
+                                sign = ifelse(value>0,"pos","neg"),
+                                absValue = abs(value))
 DD_corr3 <- filter(DD_corr2, (absValue) > .2)
 # plot 
 pdf("../output/corrplot_DD.pdf") 

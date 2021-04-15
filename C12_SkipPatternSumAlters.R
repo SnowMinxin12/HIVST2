@@ -162,8 +162,8 @@ index.data$hang_out_contact4Proportion <- ifelse(rowSums(is.na(hang_out_orienCol
 
 #6. "hang_out_sex1"+
 hang_out_sexCol = index.data[,c("hang_out_sex1","hang_out_sex2","hang_out_sex3","hang_out_sex4","hang_out_sex5","hang_out_sex6")]
-index.data$hang_out_sex0Count <- ifelse(rowSums(is.na(hang_out_orienCol))==6,NA,rowSums(hang_out_orienCol == "0",na.rm=TRUE)) #count rows which are not all NA
-index.data$hang_out_orien0Proportion <- ifelse(is.na(index.data$hang_out_sex0Count),NA,index.data$hang_out_sex0Count/index.data$hang_outCount)
+index.data$hang_out_sex0Count <- ifelse(rowSums(is.na(hang_out_sexCol))==6,NA,rowSums(hang_out_sexCol == "0",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_sex0Proportion <- ifelse(is.na(index.data$hang_out_sex0Count),NA,index.data$hang_out_sex0Count/index.data$hang_outCount)
 
 #7. "friend_told_fam1"
 friend_told_famCol = index.data[,c("friend_told_fam1","friend_told_fam2","friend_told_fam3","friend_told_fam4","friend_told_fam5","friend_told_fam6")]
@@ -390,10 +390,12 @@ altersalters <- c("hang_out","hang_out_rel","hang_out_ident","hang_out_orien","h
                   "sex_friend_freq6","sex_friend_condom6","friend_supply_kit6")
 alters.data <- alters.data[,!colnames(alters.data) %in% altersalters]
 ##### remove from analysis for now #####
-VarRemovedA <- c("response_date","index_or_alter")
+alters.data$province0 <- ifelse(alters.data$province==0,0,1)
+VarRemovedA <- c("response_date","index_or_alter","city","province")
 alters.data <- alters.data[,!colnames(alters.data) %in% VarRemovedA]
 
 ##### summarize alters for 269 alter data #####
+
 alters.varname = colnames(alters.data)[2]
 alters.data.summarized <- reshape2::dcast(data=alters.data,
                                           as.formula(paste0("confirm_code ~", alters.varname)),
@@ -409,6 +411,9 @@ for (i in 3:ncol(alters.data)){
   colnames(alters.var2)=c("confirm_code",paste0(alters.varname,"_",colnames(alters.var2)[-1]))
   alters.data.summarized=merge(x=alters.data.summarized,y=alters.var2, by="confirm_code")
 }
+# remove all NA columns
+alters.data.summarized = dplyr::select(alters.data.summarized,!contains("NA"))
+alters.data.summarized = dplyr::select(alters.data.summarized,!contains("SKIP"))
 
 write.csv(alters.data.summarized,file="../data/summarizedA.csv")
 
