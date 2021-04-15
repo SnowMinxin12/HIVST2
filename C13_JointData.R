@@ -1,24 +1,27 @@
 ### C13_JointData
-### author: 
-### date: 2021-4-12
-### 
+### author: Minxin Lu
+### date: 2021-4-14
 ### (1) join 3 datasets together
 ### input: C12SkipPatterbSumAlters.R
 ### output: one joint data by index confirmation code
+summarizedB <- read_csv("../data/summarizedB.csv")
+summarizedA <- read_csv("../data/summarizedA.csv")
+summarizedS <- read_csv("../data/summarizedS.csv")
 
-source("C11_Check_Variable_Class.R")
-length(unique(DataB$DC))#309
-length(unique(DataA$A))# 140 <269
-length(unique(DataS$B)) #207
-length(intersect(unique(DataA$A),unique(DataB$DC)))# 140
-length(intersect(unique(DataA$A),unique(DataS$B)))# 88
-length(intersect(unique(DataB$DC),unique(DataS$B))) #185
+summarizedB <- summarizedB[,colnames(summarizedB)!="X1"]
+summarizedA <- summarizedA[,colnames(summarizedA)!="X1"]
+summarizedS <- summarizedS[,colnames(summarizedS)!="X1"]
 
-table(DataB$DD)
-hist(DataB$DD)
-table(DataA$A)
-mean(DataB$DD)
-var(DataB$DD)
+colnames(summarizedB) <- paste0("B.",colnames(summarizedB))
+colnames(summarizedA) <- paste0("A.",colnames(summarizedA))
+colnames(summarizedS) <- paste0("S.",colnames(summarizedS))
 
-# keep complete variables
-x[, complete.cases(t(x)), drop=FALSE]
+summarizedBA <- merge(x=summarizedB,y=summarizedA, by.x="B.confirm_code",by.y="A.confirm_code")
+summarizedBAS <- merge(x=summarizedBA,y=summarizedS, by.x="B.confirm_code",by.y="S.confirm_code")
+
+# remove irrelavent variables
+varRemoved <- c("B.confirm_code","B.hang_out_name","B.hang_out_name2","B.hang_out_name3","B.hang_out_name4",
+                "B.hang_out_name5","B.hang_out_name6")
+summarizedBAS <- summarizedBAS[,!colnames(summarizedBAS) %in% varRemoved]
+
+write.csv(summarizedBAS, file="../data/jointdata.csv")

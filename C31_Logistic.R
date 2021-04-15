@@ -1,7 +1,7 @@
 ### C31_Logistic.R
 ### author: 
 ### date: 2021-4-12
-### logistic for aim 1
+### logistic for aim 1 outcome="B.test_kits_actual"
 ### (1) check model assumption
 ### (2) fit model with model selection: LASSO, best subset selection, AIC
 ### input: (1) the function F31_Logistic.R, (2) dataset

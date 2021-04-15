@@ -1,11 +1,11 @@
 ### C12_SkipPatternSumAlters.R
 ### author: Josh R, Minxin Lu
-### date: 2021-4-13
-### (1) This code re-code skip pattern different from missing data of 
+### date: 2021-4-14
+### (1) This code re-code skip pattern of 
 ### the three data files from C11_Check_Variable_Class.R (index, alters, follow-up)
-### (2) summarize alter data by index
+### (2) summarize data by index
 ### input: C11_Modified_Variable_Class.R
-### output: alters.data.summarized, survey.data.summarized
+### output: index.data.summarized, alters.data.summarized, survey.data.summarized
 
 library(tidyverse)
 library(knitr)
@@ -101,26 +101,151 @@ index.data$know_prior_result <- as.factor(ifelse((index.data$prior_test_method %
 ##### modify variables #####
 # birth year to years-old
 index.data$age <- 2021-index.data$year_of_birth
+#hang_out1 all=1
+index.data$hang_out1 = 0
+index.data$hang_out_sex4 = index.data$other_sex_partners
+index.data$hang_out_sex5 = index.data$hang_out5
+index.data$hang_out_sex6 = index.data$hang_out6
+##### summarize friends info for 309 index data #####
+#1. "hang_out1"
+hang_outCol = index.data[,c("hang_out1","hang_out2","hang_out3","other_sex_partners","hang_out5","hang_out6")]
+index.data$hang_outCount <- ifelse(rowSums(is.na(hang_outCol))==6,NA,rowSums(hang_outCol == "0",na.rm=TRUE)) #count rows which are not all NA
 
-if(FALSE){
-  #hang_out1 depends on hang_out_rel1
-  hang_out_rel1
-  ##### summarize friends info for 309 index data #####
-  "hang_out1","hang_out_rel1","hang_out_ident1","hang_out_orien1","hang_out_contact1",
-  "hang_out_sex1","friend_told_fam1","friend_told_coll1","friend_told_het1","friend_told_medwork1",
-  "friend_told_noone1","friend_told_notsure1","sex_friend_freq1","sex_friend_condom1",
-  "friend_supply_kit1"
-  
-  #1. "hang_out1"
-  hang_outCol = index.data[,c("hang_out1","hang_out2","hang_out3","hang_out4","hang_out5","hang_out6")]
-  index.data$hang_out0Count <- ifelse(rowSums(is.na(hang_outCol))==5,NA,rowSums(hang_outCol == "0",na.rm=TRUE)) #count rows which are not all NA
-  index.data$hang_out0Proportion <- ifelse(rowSums(is.na(hang_outCol))==5,NA,rowSums(hang_outCol == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterSexCol))))
-  
-  ##### remove unrelated variables #####
-  VarBremoved <- c("deposit","application_date","sex_birth","year_of_birth")
-}
+#2. "hang_out_rel1"
+hang_out_relCol = index.data[,c("hang_out_rel1","hang_out_rel2","hang_out_rel3","hang_out_rel4","hang_out_rel5","hang_out_rel6")]
+index.data$hang_out_rel0Count <- ifelse(rowSums(is.na(hang_out_relCol))==6,NA,rowSums(hang_out_relCol == "0",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_rel0Proportion <- ifelse(rowSums(is.na(hang_out_relCol))==6,NA,rowSums(hang_out_relCol == "0",na.rm=TRUE)/index.data$hang_outCount)
+index.data$hang_out_rel1Count <- ifelse(rowSums(is.na(hang_out_relCol))==6,NA,rowSums(hang_out_relCol == "1",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_rel1Proportion <- ifelse(rowSums(is.na(hang_out_relCol))==6,NA,rowSums(hang_out_relCol == "1",na.rm=TRUE)/index.data$hang_outCount)
+index.data$hang_out_rel2Count <- ifelse(rowSums(is.na(hang_out_relCol))==6,NA,rowSums(hang_out_relCol == "2",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_rel2Proportion <- ifelse(rowSums(is.na(hang_out_relCol))==6,NA,rowSums(hang_out_relCol == "2",na.rm=TRUE)/index.data$hang_outCount)
+index.data$hang_out_rel3Count <- ifelse(rowSums(is.na(hang_out_relCol))==6,NA,rowSums(hang_out_relCol == "3",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_rel3Proportion <- ifelse(rowSums(is.na(hang_out_relCol))==6,NA,rowSums(hang_out_relCol == "3",na.rm=TRUE)/index.data$hang_outCount)
+index.data$hang_out_rel4Count <- ifelse(rowSums(is.na(hang_out_relCol))==6,NA,rowSums(hang_out_relCol == "4",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_rel4Proportion <- ifelse(rowSums(is.na(hang_out_relCol))==6,NA,rowSums(hang_out_relCol == "4",na.rm=TRUE)/index.data$hang_outCount)
 
 
+#3. "hang_out_ident1"
+hang_out_identCol = index.data[,c("hang_out_ident1","hang_out_ident2","hang_out_ident3","hang_out_ident4","hang_out_ident5","hang_out_ident6")]
+index.data$hang_out_ident0Count <-      ifelse(rowSums(is.na(hang_out_identCol))==6,NA,rowSums(hang_out_identCol == "0",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_ident0Proportion <- ifelse(rowSums(is.na(hang_out_identCol))==6,NA,rowSums(hang_out_identCol == "0",na.rm=TRUE)/index.data$hang_outCount)
+index.data$hang_out_ident1Count <-      ifelse(rowSums(is.na(hang_out_identCol))==6,NA,rowSums(hang_out_identCol == "1",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_ident1Proportion <- ifelse(rowSums(is.na(hang_out_identCol))==6,NA,rowSums(hang_out_identCol == "1",na.rm=TRUE)/index.data$hang_outCount)
+index.data$hang_out_ident2Count <- ifelse(rowSums(is.na(hang_out_identCol))==6,NA,rowSums(hang_out_identCol == "2",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_ident2Proportion <- ifelse(rowSums(is.na(hang_out_identCol))==6,NA,rowSums(hang_out_identCol == "2",na.rm=TRUE)/index.data$hang_outCount)
+index.data$hang_out_ident3Count <- ifelse(rowSums(is.na(hang_out_identCol))==6,NA,rowSums(hang_out_identCol == "3",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_ident3Proportion <- ifelse(rowSums(is.na(hang_out_identCol))==6,NA,rowSums(hang_out_identCol == "3",na.rm=TRUE)/index.data$hang_outCount)
+
+#4. "hang_out_orien1"
+hang_out_orienCol = index.data[,c("hang_out_orien1","hang_out_orien2","hang_out_orien3","hang_out_orien4","hang_out_orien5","hang_out_orien6")]
+index.data$hang_out_orien0Count <-      ifelse(rowSums(is.na(hang_out_orienCol))==6,NA,rowSums(hang_out_orienCol == "0",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_orien0Proportion <- ifelse(rowSums(is.na(hang_out_orienCol))==6,NA,rowSums(hang_out_orienCol == "0",na.rm=TRUE)/index.data$hang_outCount)
+index.data$hang_out_orien1Count <-      ifelse(rowSums(is.na(hang_out_orienCol))==6,NA,rowSums(hang_out_orienCol == "1",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_orien1Proportion <- ifelse(rowSums(is.na(hang_out_orienCol))==6,NA,rowSums(hang_out_orienCol == "1",na.rm=TRUE)/index.data$hang_outCount)
+index.data$hang_out_orien2Count <-      ifelse(rowSums(is.na(hang_out_orienCol))==6,NA,rowSums(hang_out_orienCol == "2",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_orien2Proportion <- ifelse(rowSums(is.na(hang_out_orienCol))==6,NA,rowSums(hang_out_orienCol == "2",na.rm=TRUE)/index.data$hang_outCount)
+index.data$hang_out_orien3Count <-      ifelse(rowSums(is.na(hang_out_orienCol))==6,NA,rowSums(hang_out_orienCol == "3",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_orien3Proportion <- ifelse(rowSums(is.na(hang_out_orienCol))==6,NA,rowSums(hang_out_orienCol == "3",na.rm=TRUE)/index.data$hang_outCount)
+
+#5. "hang_out_contact1-3",
+hang_out_contactCol = index.data[,c("hang_out_contact1","hang_out_contact2","hang_out_contact3")]
+index.data$hang_out_contact0Count <-      ifelse(rowSums(is.na(hang_out_orienCol))==3,NA,rowSums(hang_out_orienCol == "0",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_contact0Proportion <- ifelse(rowSums(is.na(hang_out_orienCol))==3,NA,rowSums(hang_out_orienCol == "0",na.rm=TRUE)/rowSums(!is.na(hang_out_orienCol)))
+index.data$hang_out_contact1Count <-      ifelse(rowSums(is.na(hang_out_orienCol))==3,NA,rowSums(hang_out_orienCol == "1",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_contact1Proportion <- ifelse(rowSums(is.na(hang_out_orienCol))==3,NA,rowSums(hang_out_orienCol == "1",na.rm=TRUE)/rowSums(!is.na(hang_out_orienCol)))
+index.data$hang_out_contact2Count <-      ifelse(rowSums(is.na(hang_out_orienCol))==3,NA,rowSums(hang_out_orienCol == "2",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_contact2Proportion <- ifelse(rowSums(is.na(hang_out_orienCol))==3,NA,rowSums(hang_out_orienCol == "2",na.rm=TRUE)/rowSums(!is.na(hang_out_orienCol)))
+index.data$hang_out_contact3Count <-      ifelse(rowSums(is.na(hang_out_orienCol))==3,NA,rowSums(hang_out_orienCol == "3",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_contact3Proportion <- ifelse(rowSums(is.na(hang_out_orienCol))==3,NA,rowSums(hang_out_orienCol == "3",na.rm=TRUE)/rowSums(!is.na(hang_out_orienCol)))
+index.data$hang_out_contact4Count <-      ifelse(rowSums(is.na(hang_out_orienCol))==3,NA,rowSums(hang_out_orienCol == "4",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_contact4Proportion <- ifelse(rowSums(is.na(hang_out_orienCol))==3,NA,rowSums(hang_out_orienCol == "4",na.rm=TRUE)/rowSums(!is.na(hang_out_orienCol)))
+
+#6. "hang_out_sex1"+
+hang_out_sexCol = index.data[,c("hang_out_sex1","hang_out_sex2","hang_out_sex3","hang_out_sex4","hang_out_sex5","hang_out_sex6")]
+index.data$hang_out_sex0Count <- ifelse(rowSums(is.na(hang_out_orienCol))==6,NA,rowSums(hang_out_orienCol == "0",na.rm=TRUE)) #count rows which are not all NA
+index.data$hang_out_orien0Proportion <- ifelse(is.na(index.data$hang_out_sex0Count),NA,index.data$hang_out_sex0Count/index.data$hang_outCount)
+
+#7. "friend_told_fam1"
+friend_told_famCol = index.data[,c("friend_told_fam1","friend_told_fam2","friend_told_fam3","friend_told_fam4","friend_told_fam5","friend_told_fam6")]
+index.data$friend_told_fam0Count <- ifelse(rowSums(is.na(friend_told_famCol))==6,NA,rowSums(friend_told_famCol == "0",na.rm=TRUE)) #count rows which are not all NA
+index.data$friend_told_fam0Proportion <- ifelse(is.na(index.data$friend_told_fam0Count),NA,index.data$friend_told_fam0Count/index.data$hang_outCount)
+
+#8. "friend_told_coll1"
+friend_told_collCol = index.data[,c("friend_told_coll1","friend_told_coll2","friend_told_coll3","friend_told_coll4","friend_told_coll5","friend_told_coll6")]
+index.data$friend_told_coll0Count <- ifelse(rowSums(is.na(friend_told_collCol))==6,NA,rowSums(friend_told_collCol == "0",na.rm=TRUE)) #count rows which are not all NA
+index.data$friend_told_coll0Proportion <- ifelse(is.na(index.data$friend_told_coll0Count),NA,index.data$friend_told_coll0Count/index.data$hang_outCount)
+
+#9. "friend_told_het"
+friend_told_hetCol = index.data[,c("friend_told_het1","friend_told_het2","friend_told_het3","friend_told_het4","friend_told_het5","friend_told_het6")]
+index.data$friend_told_het0Count <- ifelse(rowSums(is.na(friend_told_hetCol))==6,NA,rowSums(friend_told_hetCol == "0",na.rm=TRUE)) #count rows which are not all NA
+index.data$friend_told_het0Proportion <- ifelse(is.na(index.data$friend_told_het0Count),NA,index.data$friend_told_het0Count/index.data$hang_outCount)
+
+#10. "friend_told_medwork"
+friend_told_medworkCol = index.data[,c("friend_told_medwork1","friend_told_medwork2","friend_told_medwork3","friend_told_medwork4","friend_told_medwork5","friend_told_medwork6")]
+index.data$friend_told_medwork0Count <- ifelse(rowSums(is.na(friend_told_medworkCol))==6,NA,rowSums(friend_told_medworkCol == "0",na.rm=TRUE)) #count rows which are not all NA
+index.data$friend_told_medwork0Proportion <- ifelse(is.na(index.data$friend_told_medwork0Count),NA,index.data$friend_told_medwork0Count/index.data$hang_outCount)
+
+#11. "friend_told_noone"
+friend_told_nooneCol = index.data[,c("friend_told_noone1","friend_told_noone2","friend_told_noone3","friend_told_noone4","friend_told_noone5","friend_told_noone6")]
+index.data$friend_told_noone0Count <- ifelse(rowSums(is.na(friend_told_nooneCol))==6,NA,rowSums(friend_told_nooneCol == "0",na.rm=TRUE)) #count rows which are not all NA
+index.data$friend_told_noone0Proportion <- ifelse(is.na(index.data$friend_told_noone0Count),NA,index.data$friend_told_noone0Count/index.data$hang_outCount)
+
+#12."friend_told_notsure"
+friend_told_notsureCol = index.data[,c("friend_told_notsure1","friend_told_notsure2","friend_told_notsure3","friend_told_notsure4","friend_told_notsure5","friend_told_notsure6")]
+index.data$friend_told_notsure0Count <- ifelse(rowSums(is.na(friend_told_notsureCol))==6,NA,rowSums(friend_told_notsureCol == "0",na.rm=TRUE)) #count rows which are not all NA
+index.data$friend_told_notsure0Proportion <- ifelse(is.na(index.data$friend_told_notsure0Count),NA,index.data$friend_told_notsure0Count/index.data$hang_outCount)
+
+#13. "sex_friend_freq"
+sex_friend_freqCol = index.data[,c("sex_friend_freq1","sex_friend_freq2","sex_friend_freq3","sex_friend_freq4","sex_friend_freq5","sex_friend_freq6")]
+index.data$sex_friend_freq0Count <-      ifelse(rowSums(is.na(sex_friend_freqCol))==6,NA,rowSums(sex_friend_freqCol == "0",na.rm=TRUE)) #count rows which are not all NA
+index.data$sex_friend_freq0Proportion <- ifelse(is.na(index.data$sex_friend_freq0Count),NA,index.data$sex_friend_freq0Count/index.data$hang_outCount)
+index.data$sex_friend_freq1Count <-      ifelse(rowSums(is.na(sex_friend_freqCol))==6,NA,rowSums(sex_friend_freqCol == "1",na.rm=TRUE)) #count rows which are not all NA
+index.data$sex_friend_freq1Proportion <- ifelse(is.na(index.data$sex_friend_freq1Count),NA,index.data$sex_friend_freq1Count/index.data$hang_outCount)
+index.data$sex_friend_freq2Count <-      ifelse(rowSums(is.na(sex_friend_freqCol))==6,NA,rowSums(sex_friend_freqCol == "2",na.rm=TRUE)) #count rows which are not all NA
+index.data$sex_friend_freq2Proportion <- ifelse(is.na(index.data$sex_friend_freq2Count),NA,index.data$sex_friend_freq2Count/index.data$hang_outCount)
+index.data$sex_friend_freq3Count <-      ifelse(rowSums(is.na(sex_friend_freqCol))==6,NA,rowSums(sex_friend_freqCol == "3",na.rm=TRUE)) #count rows which are not all NA
+index.data$sex_friend_freq3Proportion <- ifelse(is.na(index.data$sex_friend_freq3Count),NA,index.data$sex_friend_freq3Count/index.data$hang_outCount)
+index.data$sex_friend_freq4Count <-      ifelse(rowSums(is.na(sex_friend_freqCol))==6,NA,rowSums(sex_friend_freqCol == "4",na.rm=TRUE)) #count rows which are not all NA
+index.data$sex_friend_freq4Proportion <- ifelse(is.na(index.data$sex_friend_freq4Count),NA,index.data$sex_friend_freq4Count/index.data$hang_outCount)
+
+#14."sex_friend_condom"
+sex_friend_condomCol = index.data[,c("sex_friend_condom1","sex_friend_condom2","sex_friend_condom3","sex_friend_condom4","sex_friend_condom5","sex_friend_condom6")]
+index.data$sex_friend_condom0Count <- ifelse(rowSums(is.na(sex_friend_condomCol))==6,NA,rowSums(sex_friend_condomCol == "0",na.rm=TRUE)) #count rows which are not all NA
+index.data$sex_friend_condom0Proportion <- ifelse(is.na(index.data$sex_friend_condom0Count),NA,index.data$sex_friend_condom0Count/index.data$hang_outCount)
+index.data$sex_friend_condom1Count <- ifelse(rowSums(is.na(sex_friend_condomCol))==6,NA,rowSums(sex_friend_condomCol == "1",na.rm=TRUE)) #count rows which are not all NA
+index.data$sex_friend_condom1Proportion <- ifelse(is.na(index.data$sex_friend_condom1Count),NA,index.data$sex_friend_condom1Count/index.data$hang_outCount)
+index.data$sex_friend_condom2Count <- ifelse(rowSums(is.na(sex_friend_condomCol))==6,NA,rowSums(sex_friend_condomCol == "2",na.rm=TRUE)) #count rows which are not all NA
+index.data$sex_friend_condom2Proportion <- ifelse(is.na(index.data$sex_friend_condom2Count),NA,index.data$sex_friend_condom2Count/index.data$hang_outCount)
+index.data$sex_friend_condom3Count <- ifelse(rowSums(is.na(sex_friend_condomCol))==6,NA,rowSums(sex_friend_condomCol == "3",na.rm=TRUE)) #count rows which are not all NA
+index.data$sex_friend_condom3Proportion <- ifelse(is.na(index.data$sex_friend_condom3Count),NA,index.data$sex_friend_condom3Count/index.data$hang_outCount)
+
+#15. "friend_supply_kit"
+friend_supply_kitCol = index.data[,c("friend_supply_kit1","friend_supply_kit2","friend_supply_kit3","friend_supply_kit4","friend_supply_kit5","friend_supply_kit6")]
+index.data$friend_supply_kit0Count <- ifelse(rowSums(is.na(friend_supply_kitCol))==6,NA,rowSums(friend_supply_kitCol == "0",na.rm=TRUE)) #count rows which are not all NA
+index.data$friend_supply_kit0Proportion <- ifelse(is.na(index.data$friend_supply_kit0Count),NA,index.data$friend_supply_kit0Count/index.data$hang_outCount)
+
+##### remove unrelated variables #####
+VarremovedB <- c("deposit","application_date","sex_birth","year_of_birth",
+                 "hang_out1","hang_out2","hang_out3","hang_out4","other_sex_partners","hang_out5","hang_out6",
+                 "hang_out_rel1","hang_out_rel2","hang_out_rel3","hang_out_rel4","hang_out_rel5","hang_out_rel6",
+                 "hang_out_ident1","hang_out_ident2","hang_out_ident3","hang_out_ident4","hang_out_ident5","hang_out_ident6",
+                 "hang_out_orien1","hang_out_orien2","hang_out_orien3","hang_out_orien4","hang_out_orien5","hang_out_orien6",
+                 "hang_out_contact1","hang_out_contact2","hang_out_contact3",
+                 "hang_out_sex1","hang_out_sex2","hang_out_sex3","hang_out_sex4","hang_out_sex5","hang_out_sex6",
+                 "friend_told_fam1","friend_told_fam2","friend_told_fam3","friend_told_fam4","friend_told_fam5","friend_told_fam6",
+                 "friend_told_coll1","friend_told_coll2","friend_told_coll3","friend_told_coll4","friend_told_coll5","friend_told_coll6",
+                 "friend_told_het1","friend_told_het2","friend_told_het3","friend_told_het4","friend_told_het5","friend_told_het6",
+                 "friend_told_medwork1","friend_told_medwork2","friend_told_medwork3","friend_told_medwork4","friend_told_medwork5","friend_told_medwork6",
+                 "friend_told_noone1","friend_told_noone2","friend_told_noone3","friend_told_noone4","friend_told_noone5","friend_told_noone6",
+                 "friend_told_notsure1","friend_told_notsure2","friend_told_notsure3","friend_told_notsure4","friend_told_notsure5","friend_told_notsure6",
+                 "sex_friend_freq1","sex_friend_freq2","sex_friend_freq3","sex_friend_freq4","sex_friend_freq5","sex_friend_freq6",
+                 "sex_friend_condom1","sex_friend_condom2","sex_friend_condom3","sex_friend_condom4","sex_friend_condom5","sex_friend_condom6",
+                 "friend_supply_kit1","friend_supply_kit2","friend_supply_kit3","friend_supply_kit4","friend_supply_kit5","friend_supply_kit6")
+index.data.summarized <- index.data[,!colnames(index.data) %in% VarremovedB]
+remove(hang_outCol,hang_out_relCol,hang_out_identCol,hang_out_orienCol,hang_out_contactCol,
+       hang_out_sexCol,friend_told_famCol,friend_told_collCol,friend_told_hetCol,friend_told_medworkCol,
+       friend_told_nooneCol,friend_told_notsureCol,sex_friend_freqCol,sex_friend_condomCol,friend_supply_kitCol)
+write.csv(index.data.summarized,file="../data/summarizedB.csv")
 ##### 269 Alter data  #####
 names(alters.data) <- c("confirm_code","arm","response_date","result","index_or_alter",
                         "st_code","province","city","confirmation","relation_index","age",
@@ -265,11 +390,10 @@ altersalters <- c("hang_out","hang_out_rel","hang_out_ident","hang_out_orien","h
                   "sex_friend_freq6","sex_friend_condom6","friend_supply_kit6")
 alters.data <- alters.data[,!colnames(alters.data) %in% altersalters]
 ##### remove from analysis for now #####
-Varremoved <- c("response_date","index_or_alter")
-alters.data <- alters.data[,!colnames(alters.data) %in% Varremoved]
+VarRemovedA <- c("response_date","index_or_alter")
+alters.data <- alters.data[,!colnames(alters.data) %in% VarRemovedA]
 
 ##### summarize alters for 269 alter data #####
-
 alters.varname = colnames(alters.data)[2]
 alters.data.summarized <- reshape2::dcast(data=alters.data,
                                           as.formula(paste0("confirm_code ~", alters.varname)),
@@ -286,7 +410,7 @@ for (i in 3:ncol(alters.data)){
   alters.data.summarized=merge(x=alters.data.summarized,y=alters.var2, by="confirm_code")
 }
 
-
+write.csv(alters.data.summarized,file="../data/summarizedA.csv")
 
 ##### 207 Survey data names #####
 ##I tried making variable names as uniform as possible between the data sets, but there are likely some differences
@@ -453,17 +577,16 @@ survey.data$AlterCondom0Proportion <- ifelse(rowSums(is.na(AlterCondomCol))==5,N
                                                  rowSums(AlterCondomCol == "0",na.rm=TRUE)/(5-rowSums(is.na(AlterCondomCol))))
 
 
-# check = survey.data[,c("relation_first","relation_second","relation_third","relation_fourth","relation_fifth","AlterRelation0Count", "AlterRelation0Proportion")]
 
-VartobeRemoved <- c("sex_first","sex_second","sex_third","sex_fourth","sex_fifth",
+VarRemovedS <- c("sex_first","sex_second","sex_third","sex_fourth","sex_fifth",
                     "relation_first","relation_second","relation_third","relation_fourth","relation_fifth",
                     "pt_first","pt_second","pt_third","pt_fourth","pt_fifth",
                     "hivr_first","hivr_second","hivr_third","hivr_fourth","hivr_fifth",
                     "pt_sex_first","pt_sex_second","pt_sex_third","pt_sex_fourth","pt_sex_fifth",
                     "sex_before_first","sex_before_second","sex_before_third","sex_before_fourth","sex_before_fifth",
                     "condom_first","condom_second","condom_third","condom_fourth","condom_fifth")
-survey.data.summarized <- survey.data[,!colnames(survey.data) %in% VartobeRemoved]
+survey.data.summarized <- survey.data[,!colnames(survey.data) %in% VarRemovedS]
 remove(AlterSexCol,AlterRelationCol,AlterPTCol,AlterHivrCol,AlterPT_SexCol,
        AlterSex_BeforeCol,AlterCondomCol)
-
+write.csv(survey.data.summarized, file="../data/summarizedS.csv")
 
