@@ -7,10 +7,22 @@
 
 library(fastDummies)
 library(caret)
-jointdata1 <- read_csv("../data/jointdata1.csv")
-jointdata1.c22 <- jointdata1[,colnames(jointdata1)!="X1"]
+jointdataB <- read_csv("../data/jointdataB_c21.csv")
+jointdataB.c22 <- jointdataB[,colnames(jointdataB)!="X1"]
+jointdataBS <- read_csv("../data/jointdataBS_c21.csv")
+jointdataBS.c22 <- jointdataBS[,colnames(jointdataBS)!="X1"]
+jointdataBSA <- read_csv("../data/jointdataBSA_c21.csv")
+jointdataBSA.c22 <- jointdataBSA[,colnames(jointdataBSA)!="X1"]
 
-var_remove <- c(# very low prevalence
+
+jointdata1.c22 = jointdataB.c22
+var_removeB <-c(
+  "hang_out_ident2Count","hang_out_ident2Proportion")
+var_removeBS <- c(# very low prevalence
+  "B.hang_out_ident2Count","B.hang_out_ident2Proportion",
+  "S.situation_e","S.situation_f"
+)
+var_removeBSA <- c(# very low prevalence
   "B.hang_out_ident2Count","B.hang_out_ident2Proportion",
   "A.casual_3months_8","A.casual_3months_7","A.stable_3months_8","A.women_sex_post_8",
   "S.situation_f","S.situation_e","S.health_center_SKIP",
@@ -18,9 +30,9 @@ var_remove <- c(# very low prevalence
   "A.situation_b_1",# all ones so count does not make sense
   "A.situation_d_0", "A.situation_d_1","A.situation_e_1","A.situation_g_1","A.situation_f_1"
 )
-jointdata1.c22 <- jointdata1.c22[,!colnames(jointdata1.c22) %in% var_remove]
+jointdata1.c22 <- jointdata1.c22[,!colnames(jointdata1.c22) %in% var_removeB]
 
-write.csv(jointdata1.c22,file="../data/jointdata.c22.csv")
+write.csv(jointdata1.c22,file="../data/jointdataB.c22.csv")
 
 # change factors to dummies
 dummy.c22 <- fastDummies::dummy_cols(jointdata1.c22, remove_first_dummy = TRUE, ignore_na=TRUE)

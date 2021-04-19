@@ -1,40 +1,54 @@
 ### C21_MissingdataScreening
 ### author: Minxin Lu
-### date: 2021-4-14
+### date: 2021-4-16
 ### (1) delete all variables columns with missing > 50% or skip>50%
 ### (2) delete variable with variation=0
 ### input: jointdata.csv from C13
 ### output: jointdata1.csv
 
-jointdata <- read_csv("../data/jointdata.csv")
-jointdata <- jointdata[,colnames(jointdata)!="X1"]
+jointdataB <- read_csv("../data/summarizedB.csv")
+jointdataB <- jointdataB[,colnames(jointdataB)!="X1"]
+jointdataBS <- read_csv("../data/jointdataBS.csv")
+jointdataBS <- jointdataBS[,colnames(jointdataBS)!="X1"]
+jointdataBSA <- read_csv("../data/jointdataBSA.csv")
+jointdataBSA <- jointdataBSA[,colnames(jointdataBSA)!="X1"]
 
 
 # get the variable names that are missing or SKIP >10% overall
 var_miss = function(data, geq_percent){
-  
   missingness_sorted = as.data.frame(sort(colMeans(is.na(data)),decreasing = TRUE))
   missingness_sorted$var_names = rownames(missingness_sorted)
   colnames(missingness_sorted) = c("miss_percent","var_name")
   var_missing_greater = missingness_sorted[missingness_sorted$miss_percent > geq_percent,]$var_name
-  var_missing_greater
+  return(var_missing_greater)
 }
 
 
 # all variables columns with SKIP > 10% 
 var_SKIP = function(data, geq_percent){
-  missingness_sorted = as.data.frame(round(sort(colMeans(jointdata=="SKIP"),decreasing = TRUE),4))
+  missingness_sorted = as.data.frame(round(sort(colMeans(data=="SKIP"),decreasing = TRUE),4))
   missingness_sorted$var_names = rownames(missingness_sorted)
   colnames(missingness_sorted) = c("miss_percent","var_name")
   # variables missing >% 
-  var_missing_greater = missingness_sorted[missingness_sorted$miss_percent > geq_percent,]$var_name
-  var_missing_greater
+  var_skip_greater = missingness_sorted[missingness_sorted$miss_percent > geq_percent,]$var_name
+  return(var_skip_greater)
 }
 
 # remove variables with zero variance
-jointdata.c21 <- jointdata[ - as.numeric(which(apply(jointdata, 2, var) == 0))]
+var_Zerovar = function(data){
+  data <- data[ - as.numeric(which(apply(data, 2, var) == 0))]
+  return(data)
+}
 
-var_remove = union(var_miss(jointdata.c21,0.1),var_SKIP(jointdata.c21,0.1))
-jointdata.c21 <-jointdata.c21[,!colnames(jointdata.c21) %in% var_remove]
-
-write.csv(jointdata.c21,file="../data/jointdata1.csv")
+reduced_data = function(data,miss_geq_percent,skip_geq_percent){
+  data1 <- var_Zerovar(data)
+  var_remove = union(var_miss(data1,miss_geq_percent),var_SKIP(data1,skip_geq_percent))
+  data2 <-data1[,!colnames(data1) %in% var_remove]
+  return(data2)
+}
+write.csv(reduced_data(data=jointdataB,miss_geq_percent=0.1,skip_geq_percent=0.1),
+          file="../data/jointdataB_c21.csv")
+write.csv(reduced_data(data=jointdataBS,miss_geq_percent=0.1,skip_geq_percent=0.1),
+          file="../data/jointdataBS_c21.csv")
+write.csv(reduced_data(data=jointdataBSA,miss_geq_percent=0.1,skip_geq_percent=0.1),
+          file="../data/jointdataBSA_c21.csv")
