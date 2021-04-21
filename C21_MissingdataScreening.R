@@ -46,9 +46,32 @@ reduced_data = function(data,miss_geq_percent,skip_geq_percent){
   data2 <-data1[,!colnames(data1) %in% var_remove]
   return(data2)
 }
+# B.men_sex_1year
+write.csv(var_miss(data1,miss_geq_percent),file="../data/jointdataBS_miss10.csv")
+write.csv(var_SKIP(data1,skip_geq_percent),file="../data/jointdataBS_skip10.csv")
+
+
+
 write.csv(reduced_data(data=jointdataB,miss_geq_percent=0.1,skip_geq_percent=0.1),
           file="../data/jointdataB_c21.csv")
 write.csv(reduced_data(data=jointdataBS,miss_geq_percent=0.1,skip_geq_percent=0.1),
           file="../data/jointdataBS_c21.csv")
 write.csv(reduced_data(data=jointdataBSA,miss_geq_percent=0.1,skip_geq_percent=0.1),
           file="../data/jointdataBSA_c21.csv")
+
+if(FALSE){
+  data=jointdataBS
+  geq_percent=0.1
+  missingness_sorted = as.data.frame(sort(colMeans(is.na(data)),decreasing = TRUE))
+  missingness_sorted$var_names = rownames(missingness_sorted)
+  colnames(missingness_sorted) = c("miss_percent","var_name")
+  var_missing_greater = missingness_sorted[missingness_sorted$miss_percent > geq_percent,]
+  write.csv(var_missing_greater, file="../data/missing_BS.csv")
+  
+  missingness_sorted = as.data.frame(round(sort(colMeans(data=="SKIP"),decreasing = TRUE),4))
+  missingness_sorted$var_names = rownames(missingness_sorted)
+  colnames(missingness_sorted) = c("miss_percent","var_name")
+  var_skip_greater = missingness_sorted[missingness_sorted$miss_percent > geq_percent,]
+  write.csv(var_skip_greater, file="../data/skip_BS.csv")
+}
+
