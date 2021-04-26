@@ -7,15 +7,15 @@
 
 library(fastDummies)
 library(caret)
-jointdataB <- read_csv("../data/jointdataB_c21.csv")
+jointdataB <- read_csv("../data/jointdataB_c21_0422.csv")
 jointdataB.c22 <- jointdataB[,colnames(jointdataB)!="X1"]
-jointdataBS <- read_csv("../data/jointdataBS_c21.csv")
+jointdataBS <- read_csv("../data/jointdataBS_c21_0422.csv")
 jointdataBS.c22 <- jointdataBS[,colnames(jointdataBS)!="X1"]
-jointdataBSA <- read_csv("../data/jointdataBSA_c21.csv")
+jointdataBSA <- read_csv("../data/jointdataBSA_c21_0422.csv")
 jointdataBSA.c22 <- jointdataBSA[,colnames(jointdataBSA)!="X1"]
 
 
-jointdata1.c22 = jointdataB.c22
+jointdata1.c22 = jointdataBSA.c22
 var_removeB <-c(
   "hang_out_ident2Count","hang_out_ident2Proportion")
 var_removeBS <- c(# very low prevalence
@@ -30,9 +30,9 @@ var_removeBSA <- c(# very low prevalence
   "A.situation_b_1",# all ones so count does not make sense
   "A.situation_d_0", "A.situation_d_1","A.situation_e_1","A.situation_g_1","A.situation_f_1"
 )
-jointdata1.c22 <- jointdata1.c22[,!colnames(jointdata1.c22) %in% var_removeB]
+jointdata1.c22 <- jointdata1.c22[,!colnames(jointdata1.c22) %in% var_removeBSA]
 
-write.csv(jointdata1.c22,file="../data/jointdataB.c22.csv")
+write.csv(jointdata1.c22,file="../data/jointdataBSA_c22_0422.csv")
 
 # change factors to dummies
 dummy.c22 <- fastDummies::dummy_cols(jointdata1.c22, remove_first_dummy = TRUE, ignore_na=TRUE)

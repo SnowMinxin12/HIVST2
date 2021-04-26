@@ -24,15 +24,15 @@ var_miss = function(data, geq_percent){
 }
 
 
-# all variables columns with SKIP > 10% 
-var_SKIP = function(data, geq_percent){
-  missingness_sorted = as.data.frame(round(sort(colMeans(data=="SKIP"),decreasing = TRUE),4))
-  missingness_sorted$var_names = rownames(missingness_sorted)
-  colnames(missingness_sorted) = c("miss_percent","var_name")
-  # variables missing >% 
-  var_skip_greater = missingness_sorted[missingness_sorted$miss_percent > geq_percent,]$var_name
-  return(var_skip_greater)
-}
+# # all variables columns with SKIP > 10% 
+# var_SKIP = function(data, geq_percent){
+#   missingness_sorted = as.data.frame(round(sort(colMeans(data=="SKIP"),decreasing = TRUE),4))
+#   missingness_sorted$var_names = rownames(missingness_sorted)
+#   colnames(missingness_sorted) = c("miss_percent","var_name")
+#   # variables missing >% 
+#   var_skip_greater = missingness_sorted[missingness_sorted$miss_percent > geq_percent,]$var_name
+#   return(var_skip_greater)
+# }
 
 # remove variables with zero variance
 var_Zerovar = function(data){
@@ -40,24 +40,24 @@ var_Zerovar = function(data){
   return(data)
 }
 
-reduced_data = function(data,miss_geq_percent,skip_geq_percent){
+reduced_data = function(data,miss_geq_percent){
   data1 <- var_Zerovar(data)
-  var_remove = union(var_miss(data1,miss_geq_percent),var_SKIP(data1,skip_geq_percent))
+  var_remove = var_miss(data1,miss_geq_percent)
   data2 <-data1[,!colnames(data1) %in% var_remove]
   return(data2)
 }
 # B.men_sex_1year
-write.csv(var_miss(data1,miss_geq_percent),file="../data/jointdataBS_miss10.csv")
-write.csv(var_SKIP(data1,skip_geq_percent),file="../data/jointdataBS_skip10.csv")
+# write.csv(var_miss(data1,miss_geq_percent),file="../data/jointdataBS_miss10.csv")
+# write.csv(var_SKIP(data1,skip_geq_percent),file="../data/jointdataBS_skip10.csv")
+# 
 
 
-
-write.csv(reduced_data(data=jointdataB,miss_geq_percent=0.1,skip_geq_percent=0.1),
-          file="../data/jointdataB_c21.csv")
-write.csv(reduced_data(data=jointdataBS,miss_geq_percent=0.1,skip_geq_percent=0.1),
-          file="../data/jointdataBS_c21.csv")
-write.csv(reduced_data(data=jointdataBSA,miss_geq_percent=0.1,skip_geq_percent=0.1),
-          file="../data/jointdataBSA_c21.csv")
+write.csv(reduced_data(data=jointdataB,miss_geq_percent=0.1),
+          file="../data/jointdataB_c21_0422.csv")
+write.csv(reduced_data(data=jointdataBS,miss_geq_percent=0.1),
+          file="../data/jointdataBS_c21_0422.csv")
+write.csv(reduced_data(data=jointdataBSA,miss_geq_percent=0.1),
+          file="../data/jointdataBSA_c21_0422.csv")
 
 if(FALSE){
   data=jointdataBS
