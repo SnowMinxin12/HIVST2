@@ -7,8 +7,6 @@
 ### input: jointdataB.c22.csv
 ### output: datasets ready for analysis 
 
-install.packages("missForest")
-install.packages("mice")
 library(readr)
 library(missForest)
 library(mice)
@@ -87,3 +85,47 @@ DataBSA_complete[continuous_varBSA] <- DataBSA_imputed_cont
 colSums(is.na(DataB_complete))
 colSums(is.na(DataBS_complete))
 colSums(is.na(DataBSA_complete))
+
+# check imputed results
+
+check_originalB <- DataB %>% select(stable_3months, stable_condoms_3months, casual_3months,
+                                             casual_condoms_3months)
+check_imputedB <- DataB_complete %>% select(stable_3months, stable_condoms_3months, casual_3months,
+                                   casual_condoms_3months)
+
+check_originalB %>% tbl_summary(statistic = list(all_categorical() ~ "{n} / {N} ({p}%)"))
+check_imputedB %>% tbl_summary(statistic = list(all_categorical() ~ "{n} / {N} ({p}%)"))
+
+check_originalBS <- DataBS %>% select(B.stable_3months, B.stable_condoms_3months, S.self_present,
+                                      S.most_important, S.result_mostrecent, S.health_center, 
+                                      S.new_drugs_1month, S.women_3months)
+check_imputedBS <- DataBS_complete %>% select(B.stable_3months, B.stable_condoms_3months, S.self_present,
+                                              S.most_important, S.result_mostrecent, S.health_center, 
+                                              S.new_drugs_1month, S.women_3months)
+
+check_originalBS %>% tbl_summary(statistic = list(all_categorical() ~ "{n} / {N} ({p}%)"))
+check_imputedBS %>% tbl_summary(statistic = list(all_categorical() ~ "{n} / {N} ({p}%)"))
+
+check_originalBSA <- DataBSA %>% select(S.share_know_hiv, S.share_know_test, S.share_know_kit,
+                                        S.explain_interpret, S.recipient_notneeded, S.recipient_present,
+                                        S.self_present, S.most_important, S.result_mostrecent, S.health_center,
+                                        S.women_3months, S.AlterSex0Count, S.AlterSex0Proportion, 
+                                        S.AlterRelation0Count, S.AlterRelation0Proportion, S.AlterRelation1Count, 
+                                        S.AlterRelation1Proportion, S.AlterRelation2Count, S.AlterRelation2Proportion,
+                                        S.AlterRelation3Count, S.AlterRelation3Proportion, S.AlterPT0Count,  
+                                        S.AlterPT0Proportion, S.AlterHivr0Count, S.AlterHivr0Proportion,
+                                        S.AlterPT_Sex0Count, S.AlterPT_Sex0Proportion)
+check_imputedBSA <- DataBSA_complete %>% select(S.share_know_hiv, S.share_know_test, S.share_know_kit,
+                                                S.explain_interpret, S.recipient_notneeded, S.recipient_present,
+                                                S.self_present, S.most_important, S.result_mostrecent, S.health_center,
+                                                S.women_3months, S.AlterSex0Count, S.AlterSex0Proportion, 
+                                                S.AlterRelation0Count, S.AlterRelation0Proportion, S.AlterRelation1Count, 
+                                                S.AlterRelation1Proportion, S.AlterRelation2Count, S.AlterRelation2Proportion,
+                                                S.AlterRelation3Count, S.AlterRelation3Proportion, S.AlterPT0Count,  
+                                                S.AlterPT0Proportion, S.AlterHivr0Count, S.AlterHivr0Proportion,
+                                                S.AlterPT_Sex0Count, S.AlterPT_Sex0Proportion)
+
+check_originalBSA %>% tbl_summary(statistic = list(all_categorical() ~ "{n} / {N} ({p}%)"))
+check_imputedBSA %>% tbl_summary(statistic = list(all_categorical() ~ "{n} / {N} ({p}%)"))
+
+# the imputed results look good, the values with most percentages are given to missing values.
