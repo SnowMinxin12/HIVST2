@@ -39,3 +39,23 @@ joint2 <- glmnet(data.matrix(subset(joint1,select=-c(confirm_code,arm,test_kits_
                         family = "poisson", 
                         lambda = joint_elnet$bestTune$lambda, 
                         alpha =joint_elnet$bestTune$alpha)
+
+#sensitivity analysis of aim2
+estimate<-function(data,indices){
+  a<-data[indices, ]
+  modelfit <- glm(test_kits_actual ~ arm +education_level+stable_3months+casual_3months+women_3months
+                    +freq_discuss+volunteer_community+help_community+nondating_community+age+hang_out_rel0Proportion
+                    +hang_out_rel1Count +hang_out_rel4Count+hang_out_ident0Count+hang_out_ident0Proportion
+                    +hang_out_ident3Proportion+hang_out_orien0Proportion, data = joint1,  family="poisson")
+  modelfit$coefficients
+}
+library(boot)
+boots <- boot(data = joint1, statistic = estimate, R=500)
+ci<-c()
+for (i in 1:22){
+  c<-boot.ci(boots, type="perc",index=i)$percent[c(4:5)]
+  ci<-rbind(ci,c)
+}
+rownames(ci)<-rownames(as.matrix(modelfit$coefficients))
+ci<-round(ci,digit=3)
+write.csv(ci,"ci.csv",row.names = T)
